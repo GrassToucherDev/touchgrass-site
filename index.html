@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Touch Grass | Real Impact Starts When You Log Off</title>
+  
+  <!-- ADD THIS LINE -->
+  <link rel="icon" type="image/png" href="assets/touchgrass-logo.png">
+  <link rel="preload" as="image" href="/assets/hero-grass-background.png" media="(min-width: 901px)" fetchpriority="high">
+  <link rel="preload" as="image" href="/assets/hero-grass-background-mobile.png" media="(max-width: 900px)" fetchpriority="high">
+  <link rel="preload" as="image" href="/assets/touchgrass-logo.png" fetchpriority="high">
+  
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css?v=preload-1">
+</head>
+<body class="is-loading">
+
+  <div class="site-preloader" aria-label="Loading Touch Grass">
+    <img src="/assets/touchgrass-logo.png" alt="">
+    <span>Loading...</span>
+  </div>
+
+  <nav>
+    <a href="#hero" class="nav-logo">
+      <img src="/assets/touchgrass-logo.png" alt="Touch Grass Logo" style="width:36px;height:36px;border-radius:50%;object-fit:contain;">
+      Touch Grass
+    </a>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#ecosystem">Ecosystem</a></li>
+      <li><a href="#touch-counter">Clicker</a></li>
+      <li><a href="#roadmap">Roadmap</a></li>
+      <li><a href="#community">Community</a></li>
+      <li><a href="#buy">Buy</a></li>
+    </ul>
+    <button class="nav-wallet">
+      <img src="/assets/solana-icon-small.png" alt="Solana" style="width:18px;height:18px;object-fit:contain;">
+      SOL wallet
+    </button>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="sun"></div>
+    <div class="sun-rays"></div>
+
+    <!-- Clouds -->
+    <div class="cloud c1"></div>
+    <div class="cloud c2"></div>
+    <div class="cloud c3"></div>
+
+    <!-- Floating Elements -->
+    <div class="float-el fe-coin-l">
+      <img src="/assets/coin-bronze-3d.png" alt="Bronze Coin Icon">
+    </div>
+    <div class="float-el fe-coin-r">
+      <img src="/assets/coin-bronze-3d.png" alt="Gold Coin Icon">
+    </div>
+    <div class="float-el fe-sol">
+      <img src="/assets/solana-icon-3d.png" alt="Solana Icon">
+    </div>
+    <div class="float-el fe-tree-l">
+      <img src="/assets/tree-green-3d.png" alt="Tree Left Icon">
+    </div>
+    <div class="float-el fe-tree-r">
+      <img src="/assets/tree-green-dark-3d.png" alt="Tree Right Icon">
+    </div>
+    <div class="float-el fe-butterfly-1">
+      <img src="/assets/butterfly-purple-3d.png" alt="Butterfly 1 Icon">
+    </div>
+    <div class="float-el fe-butterfly-2">
+      <img src="assets/butterfly-small-3d.png" alt="Butterfly 2 Icon">
+    </div>
+    <div class="float-el fe-butterfly-3">
+      <img src="/assets/butterfly-small-3d.png" alt="Butterfly 3 Icon">
+    </div>
+    <!-- Content -->
+    <div class="hero-content">
+      <h1 class="bubble-title">touch grass</h1>
+
+      <p class="hero-tagline">Real impact starts the second you log off.</p>
+
+      <p class="hero-sub">
+        Functional NFTs that blend meme culture with purpose. Every mint funds youth athletics and environmental sustainability because the internet is great, but the outdoors is better.
+      </p>
+
+      <p class="hero-cta2">Go outside. Touch some grass. Prove it. Make a difference.</p>
+
+      <div class="ca-box">
+        <label>SOLANA CA:</label>
+        <span id="ca-text">5314GTpDziP2ZdaANnt5KJEABGXy5Nn5Kyc3SFPYpump</span>
+        <button class="copy-btn" id="copyBtn">Copy</button>
+      </div>
+
+      <div class="hero-btns">
+        <a href="https://swap.pump.fun/?input=So11111111111111111111111111111111111111112&output=5314GTpDziP2ZdaANnt5KJEABGXy5Nn5Kyc3SFPYpump" target="_blank" class="btn-mint">Mint Now</a>
+        <a href="#ecosystem" class="btn-collection">View Collection</a>
+      </div>
+    </div>
+
+    <div class="grass-ground"></div>
+  </section>
+
+  <!-- ABOUT / MISSION -->
+  <section id="about">
+    <div class="section-inner">
+      <div style="text-align:center">
+        <span class="pill-label">Our Mission</span>
+      </div>
+      <h2 class="section-title" style="color:#1a3a1a">We believe kids belong outside.</h2>
+      <p class="section-sub">
+        Every token, every mint, every trade helps fund the next generation of outdoor explorers. We put crypto to real-world work.
+      </p>
+
+      <div class="mission-grid">
+        <div class="mission-card reveal">
+          <div class="icon">
+            <img src="/assets/sports-equipment-icon.png" alt="Sports Equipment">
+          </div>
+          <h3>Sports Equipment</h3>
+          <p>We purchase new sports gear for kids who can't afford it, removing the financial barrier to playing.</p>
+        </div>
+        <div class="mission-card reveal">
+          <div class="icon">
+            <img src="/assets/medal-icon.png" alt="Medal">
+          </div>
+          <h3>Registration Fees</h3>
+          <p>We cover youth sports registration fees so no kid misses out on a season due to cost.</p>
+        </div>
+        <div class="mission-card reveal">
+          <div class="icon">
+            <img src="/assets/leaf-growth-icon.png" alt="Environmental">
+          </div>
+          <h3>Environmental Impact</h3>
+          <p>We support sustainability initiatives to keep outdoor spaces clean, green, and worth touching.</p>
+        </div>
+        <div class="mission-card reveal">
+          <div class="icon">
+            <img src="/assets/community-icon.png" alt="Community">
+          </div>
+          <h3>Community Driven</h3>
+          <p>Every holder is part of the movement. The community votes on which initiatives get funded next.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ECOSYSTEM -->
+  <section id="ecosystem">
+    <div class="section-inner">
+      <div style="text-align:center">
+        <span class="pill-label">The Ecosystem</span>
+      </div>
+      <h2 class="section-title">Every part has a purpose.</h2>
+      <p class="section-sub">
+        Four pillars, one mission. The TouchGrass ecosystem is built to reward participation and drive real-world impact.
+      </p>
+
+      <div class="eco-grid">
+        <div class="eco-card reveal">
+          <div class="eco-num">1</div>
+          <h3>Grass Toucher NFTs</h3>
+          <div class="eco-chain">◎ On Solana</div>
+          <p>Stake your Grass Toucher NFTs to earn rewards and grow within the Touch Grass ecosystem. Has staking.</p>
+        </div>
+        <div class="eco-card reveal">
+          <div class="eco-num">2</div>
+          <h3>Screen Toucher NFTs</h3>
+          <div class="eco-chain">⬡ On BNB</div>
+          <p>Exclusive NFTs for the on-screen warriors. Built on BNB Chain for the ones who haven't logged off yet.</p>
+        </div>
+        <div class="eco-card reveal">
+          <div class="eco-num">3</div>
+          <h3>$TOUCHGRASS Token</h3>
+          <div class="eco-chain">◎ On Solana</div>
+          <p>The fuel of our ecosystem. Earn, trade, and grow with $TOUCHGRASS on Solana. Powers everything.</p>
+        </div>
+        <div class="eco-card reveal">
+          <div class="eco-num">4</div>
+          <h3>Proof of Grass Test</h3>
+          <div class="eco-chain">🌿 Daily</div>
+          <p>Daily touch grass check-in with a streak system. Stay consistent. Earn rewards. Prove you went outside.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TOUCH COUNTER -->
+  <section id="touch-counter">
+    <div class="section-inner">
+      <div style="text-align:center">
+        <span class="pill-label">Touch Counter</span>
+      </div>
+      <h2 class="section-title" style="color:#1a3a1a">How many times can you touch grass?</h2>
+      <p class="section-sub">
+        Tap the patch. Run up the count. Grass doesn't click itself.
+      </p>
+
+      <div class="grass-clicker reveal">
+        <div class="clicker-count" aria-live="polite">
+          <span id="grassClickCount">0</span>
+          <small>grass touches</small>
+        </div>
+        <button class="grass-patch" id="grassPatch" type="button" aria-label="Touch the grass">
+          <span class="grass-blades" aria-hidden="true"></span>
+          <img src="/assets/pog-icon.png" alt="" class="grass-clicker-mascot">
+          <img src="/assets/leaf-green-3d.png" alt="" class="clicker-leaf clicker-leaf-left">
+          <img src="/assets/leaf-green-3d.png" alt="" class="clicker-leaf clicker-leaf-right">
+          <span class="grass-touch-text">touch grass</span>
+        </button>
+        <button class="clicker-reset" id="grassReset" type="button">Reset counter</button>
+      </div>
+    </div>
+
+  </section>
+
+  
+
+  <!-- ROADMAP -->
+  <section id="roadmap">
+    <div class="section-inner">
+      <div style="text-align:center">
+        <span class="pill-label">Roadmap</span>
+      </div>
+      <h2 class="section-title">The journey outside.</h2>
+      <p class="section-sub">
+        We know the path. We're walking it. Touch grass along the way.
+      </p>
+
+      <div class="roadmap-track">
+        <div class="rm-item">
+          <div class="rm-dot">
+            <img src="/assets/rocket-icon.png" alt="Rocket">
+          </div>
+          <div class="rm-content">
+            <div class="quarter">Q3 2025</div>
+            <h3>Pump.</h3>
+            <p>Token launch, community building, initial NFT drops and ecosystem foundation. Lock in.</p>
+          </div>
+        </div>
+        <div class="rm-item">
+          <div class="rm-dot">
+            <img src="/assets/leaf-growth-icon.png" alt="Growth">
+          </div>
+          <div class="rm-content">
+            <div class="quarter">Q4 2025</div>
+            <h3>Touch Grass.</h3>
+            <p>Proof of Grass Test launch, staking live, first youth sports initiative funded. Go outside.</p>
+          </div>
+        </div>
+        <div class="rm-item">
+          <div class="rm-dot">
+            <img src="/assets/infinity-icon.png" alt="Forever">
+          </div>
+          <div class="rm-content">
+            <div class="quarter">Q1 2026</div>
+            <h3>Rinse and repeat forever.</h3>
+            <p>Ecosystem expansion, BNB NFT cross-chain utility, community governance, more kids outside. Forever.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+<!-- COMMUNITY -->
+<section id="community">
+  <div class="section-inner">
+    <div style="text-align:center">
+      <span class="pill-label">Stay Connected</span>
+    </div>
+    <h2 class="section-title">Join the Movement</h2>
+    <p class="section-sub">
+      Be part of the Touch Grass community. Follow us across all platforms for updates, memes, and announcements.
+    </p>
+
+    <div class="community-cards">
+      <a href="https://x.com/XTouchGrass" target="_blank" class="comm-card">
+        <div class="icon"><img src="/assets/twitter-x-icon.png" alt="Twitter X"></div>
+        <h3>Twitter / X</h3>
+        <p>@XTouchGrass</p>
+      </a>
+      <a href="https://t.me/touchgrasscommunity" target="_blank" class="comm-card">
+        <div class="icon"><img src="/assets/telegram-icon.png" alt="Telegram"></div>
+        <h3>Telegram</h3>
+        <p>Community Chat</p>
+      </a>
+      <a href="https://dexscreener.com/solana/HCSSW5tyLPCRUYcVUxRfYtmJQ3niAPzstsPHg8srt5CH" target="_blank" class="comm-card">
+        <div class="icon"><img src="/assets/chart-icon.png" alt="DexScreener"></div>
+        <h3>DexScreener</h3>
+        <p>Live Chart</p>
+      </a>
+      <a href="https://www.solsuite.io/grasstouchers" target="_blank" class="comm-card">
+        <div class="icon"><img src="/assets/nft-staking-icon.png" alt="NFT Staking"></div>
+        <h3>Grass Touchers Staking</h3>
+        <p>NFT Staking</p>
+      </a>
+      <a href="https://launchmynft.io/collections/EXAVs6mZocAWdt3obHB7y9HVZzJxdZYq9Gy66YVsqzHb/tm8QC6Qeo04jOBBIdrh9" target="_blank" class="comm-card">
+        <div class="icon"><img src="/assets/nft-gallery-icon.png" alt="NFT Gallery"></div>
+        <h3>Grass Touchers Mint</h3>
+        <p>Launch NFT</p>
+      </a>
+      <a href="https://www.orca.so/pools?tokenIn=EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v&tokenOut=5314GTpDziP2ZdaANnt5KJEABGXy5Nn5Kyc3SFPYpump" target="_blank" class="comm-card">
+        <div class="icon"><img src="/assets/orca-icon.png" alt="Orca Trade"></div>
+        <h3>Trade on Orca</h3>
+        <p>Swap $TOUCHGRASS</p>
+      </a>
+      <a href="https://www.coingecko.com/en/coins/touch-grass" target="_blank" class="comm-card">
+        <div class="icon"><img src="/assets/coingecko-icon.png" alt="CoinGecko"></div>
+        <h3>CoinGecko</h3>
+        <p>Price & Analytics</p>
+      </a>
+      <a href="https://www.tiktok.com/@tiktoktouchgrass" target="_blank" class="comm-card">
+        <div class="icon"><img src="/assets/tiktok-icon.png" alt="TikTok"></div>
+        <h3>TikTok</h3>
+        <p>@tiktoktouchgrass</p>
+      </a>
+      <a href="https://twitch.tv/twitchtouchgrass" target="_blank" class="comm-card">
+        <div class="icon"><img src="/assets/twitch-icon.png" alt="Twitch"></div>
+        <h3>Twitch</h3>
+        <p>Live Streams</p>
+      </a>
+      <a href="https://kick.com/kicktouchgrass" target="_blank" class="comm-card">
+        <div class="icon"><img src="/assets/kick-icon.png" alt="Kick"></div>
+        <h3>Kick</h3>
+        <p>Gaming Content</p>
+      </a>
+      <a href="https://youtube.com/@youtubetouchgrass?si=jEuDTEWHI-JrAm4N&sub_confirmation=1" target="_blank" class="comm-card">
+        <div class="icon"><img src="/assets/youtube-icon.png" alt="YouTube"></div>
+        <h3>YouTube</h3>
+        <p>@youtubetouchgrass</p>
+      </a>
+      <a href="http://instagram.com/igtouchgrass" target="_blank" class="comm-card">
+        <div class="icon"><img src="/assets/instagram-icon.png" alt="Instagram"></div>
+        <h3>Instagram</h3>
+        <p>@igtouchgrass</p>
+      </a>
+    </div>
+  </div>
+</section>
+
+  <!-- PROOF OF GRASS -->
+  <section id="proof-of-grass">
+    <div class="section-inner">
+      <div style="text-align:center">
+        <span class="pill-label">Daily Challenge</span>
+      </div>
+      <h2 class="section-title">Proof of Grass</h2>
+      <p class="section-sub">
+        Daily touch grass check-in with a streak system. Stay consistent, earn rewards, and prove you went outside.
+      </p>
+
+      <div class="pog-card reveal">
+        <img src="/assets/pog.jpg" alt="Proof of Grass" class="pog-image">
+        <h3>Check Your Streak</h3>
+        <p>Log in daily, touch grass, submit proof. Build your streak. Earn $TOUCHGRASS rewards.</p>
+        <a href="http://Proofofgrass.vercel.app" target="_blank" class="pog-btn">Start Challenge →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- BUY -->
+  <section id="buy">
+    <div class="section-inner">
+      <div style="text-align:center">
+        <span class="pill-label">Get $TOUCHGRASS</span>
+      </div>
+      <h2 class="section-title">Ready to buy?</h2>
+      <p class="section-sub">
+        Choose your preferred platform and join the ecosystem. Step away. Touch grass. Earn rewards. Make an impact.
+      </p>
+
+      <div class="buy-options">
+        <a href="https://swap.pump.fun/?input=So11111111111111111111111111111111111111112&output=5314GTpDziP2ZdaANnt5KJEABGXy5Nn5Kyc3SFPYpump" target="_blank" class="buy-card">
+          <div class="icon">
+            <img src="/assets/pump-fun-icon.png" alt="Pump Fun">
+          </div>
+          <h3>Pump.fun</h3>
+          <p>Fast swap on Pump.fun platform.</p>
+          <span class="buy-btn">Buy Now ></span>
+        </a>
+        <a href="https://app.meteora.ag/pools/EbUhiaaC7WKpP522fVM2AyUfjHuNNaZmk42Wkjq7tk6k" target="_blank" class="buy-card">
+          <div class="icon">
+            <img src="/assets/meteora-icon.png" alt="Meteora">
+          </div>
+          <h3>Meteora</h3>
+          <p>Trade via Meteora liquidity pools.</p>
+          <span class="buy-btn">Buy Now ></span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">
+      <img src="/assets/touchgrass-logo.png" alt="Touch Grass Logo">
+      <span>Touch Grass</span>
+    </div>
+    <ul class="footer-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#ecosystem">Ecosystem</a></li>
+      <li><a href="#touch-counter">Clicker</a></li>
+      <li><a href="#roadmap">Roadmap</a></li>
+      <li><a href="#community">Community</a></li>
+      <li><a href="#buy">Buy</a></li>
+    </ul>
+    <p>© 2025 TouchGrass. Go outside. Touch some grass. Make a difference.</p>
+    <p style="margin-top:8px; color:#2a4a2a;">team@touchgrass.it.com</p>
+  </footer>
+
+  <script src="script.js?v=preload-1"></script>
+</body>
+</html>
