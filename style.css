@@ -537,12 +537,18 @@ section { padding: 80px 24px; }
   gap: 20px;
 }
 .eco-card {
-  background: linear-gradient(145deg, #0f2d0f, #1a4a1a);
+    background: linear-gradient(145deg, #0f2d0f, #1a4a1a);
   border: 1.5px solid #2a6e2a;
   border-radius: 24px; padding: 28px 24px;
   transition: transform 0.25s, border-color 0.25s;
   position: relative; overflow: hidden;
+  text-decoration: none;
+  color: inherit;
 }
+.eco-card:visited {
+  color: inherit
+}
+
 .eco-card::before {
   content: '';
   position: absolute; top: -40px; right: -40px;
