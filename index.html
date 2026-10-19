@@ -19,6 +19,11 @@
   <meta name="twitter:image" content="https://touchgrass.today/assets/og.jpg">
   <meta name="theme-color" content="#3a9ef0">
   
+  <script>
+    // Always open at the top (unless a #section link was used)
+    try { if ('scrollRestoration' in history) history.scrollRestoration = 'manual'; } catch (e) {}
+    if (!location.hash) { document.documentElement.style.scrollBehavior = 'auto'; window.scrollTo(0, 0); }
+  </script>
   <link rel="icon" type="image/png" href="assets/hero/wago-face.png">
   <link rel="preload" as="image" href="/assets/hero-grass-background.png" media="(min-width: 901px)" fetchpriority="high">
   <link rel="preload" as="image" href="/assets/hero-grass-background-mobile.png" media="(max-width: 900px)" fetchpriority="high">
@@ -27,7 +32,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="style.css?v=preload-1">
   <!-- Brand layer: matches the Proof of Grass / WAGO Drops / Harvest apps. Remove this one line to see the previous look. -->
-  <link rel="stylesheet" href="brand.css?v=7">
+  <link rel="stylesheet" href="brand.css?v=8">
 </head>
 <body class="is-loading">
 
@@ -452,6 +457,6 @@
     <p style="margin-top:8px; color:#2a4a2a;">team@touchgrass.it.com</p>
   </footer>
 
-  <script src="script.js?v=preload-1"></script>
+  <script src="script.js?v=top-1"></script>
 </body>
 </html>
