@@ -468,3 +468,52 @@ footer { background: #081a03; }
 }
 @keyframes swipeNudge { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(8px); } }
 @media (prefers-reduced-motion: reduce) { .swipe-hint i { animation: none; } }
+
+/* ===== More phone carousels: Apps banners, Roadmap steps, Buy cards ===== */
+@media (max-width: 800px) {
+  .app-banners, .buy-options, .roadmap-track {
+    display: flex; flex-wrap: nowrap; justify-content: flex-start; align-items: stretch;
+    gap: 14px; max-width: none;
+    overflow-x: auto; overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    margin: 28px -24px 0; padding: 6px 24px 18px;
+    scroll-padding-inline: 24px;
+  }
+  .app-banners::-webkit-scrollbar, .buy-options::-webkit-scrollbar, .roadmap-track::-webkit-scrollbar { display: none; }
+
+  .app-banners > .app-banner {
+    flex: 0 0 84%; max-width: 340px; min-height: 360px;
+    scroll-snap-align: start;
+    opacity: 1 !important; transform: none !important;
+  }
+  .buy-options > .buy-card {
+    flex: 0 0 72%; max-width: 300px; min-width: 0;
+    scroll-snap-align: start;
+  }
+
+  /* roadmap: vertical timeline becomes a row of step cards */
+  .roadmap-track { flex-direction: row; flex-wrap: nowrap; position: static; }
+  .roadmap-track::before { display: none; }
+  .roadmap-track > .rm-item {
+    flex: 0 0 80%; max-width: 320px;
+    flex-direction: column; align-items: flex-start; gap: 12px;
+    padding: 22px 20px;
+    border-radius: 20px;
+    background: linear-gradient(145deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+    border: 1px solid rgba(125,200,50,0.3);
+    scroll-snap-align: start;
+    opacity: 1 !important; transform: none !important;
+  }
+  .rm-dot { width: 52px; min-width: 52px; height: 52px; }
+  .rm-content { padding-top: 0; }
+
+  #roadmap .carousel-dots button, #buy .carousel-dots button { background: rgba(240,239,234,0.28); }
+  #roadmap .carousel-dots button.is-active, #buy .carousel-dots button.is-active { background: var(--lime); }
+  #roadmap .swipe-hint, #buy .swipe-hint { color: rgba(240,239,234,0.8); }
+}
+@media (max-width: 560px) {
+  .app-banners, .buy-options, .roadmap-track { margin-left: -18px; margin-right: -18px; padding-left: 18px; padding-right: 18px; scroll-padding-inline: 18px; }
+}

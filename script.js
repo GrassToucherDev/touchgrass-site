@@ -277,7 +277,7 @@ grassReset?.addEventListener('click', () => {
 });
 
 // ── Phone carousels: dots (or a counter for long lists) that follow the swipe ──
-document.querySelectorAll('.mission-grid, .eco-grid, .community-cards').forEach((track) => {
+document.querySelectorAll('.mission-grid, .eco-grid, .community-cards, .app-banners, .buy-options, .roadmap-track').forEach((track) => {
   const cards = Array.from(track.children);
   if (cards.length < 2) return;
   const nav = document.createElement('div');
