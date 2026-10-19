@@ -11,8 +11,10 @@
   <link rel="preload" as="image" href="/assets/hero-grass-background-mobile.png" media="(max-width: 900px)" fetchpriority="high">
   <link rel="preload" as="image" href="/assets/touchgrass-logo.png" fetchpriority="high">
   
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="style.css?v=preload-1">
+  <!-- Brand layer: matches the Proof of Grass / WAGO Drops / Harvest apps. Remove this one line to see the previous look. -->
+  <link rel="stylesheet" href="brand.css?v=1">
 </head>
 <body class="is-loading">
 
@@ -27,6 +29,7 @@
       Touch Grass
     </a>
     <ul class="nav-links">
+      <li><a href="#apps">Apps</a></li>
       <li><a href="#about">About</a></li>
       <li><a href="#ecosystem">Ecosystem</a></li>
       <li><a href="#touch-counter">Clicker</a></li>
@@ -102,6 +105,38 @@
     <div class="grass-ground"></div>
   </section>
 
+  <!-- APPS -->
+  <section id="apps">
+    <div class="section-inner">
+      <div style="text-align:center">
+        <span class="pill-label">The Apps</span>
+      </div>
+      <h2 class="section-title">Go outside. Prove it. Grow together.</h2>
+      <p class="section-sub">
+        Three apps, one community. Build your streak, hunt real-world drops, and plant $TOUCHGRASS toward Harvest Day.
+      </p>
+
+      <div class="app-banners">
+        <a href="https://proofofgrass.app" target="_blank" rel="noopener" class="app-banner app-pog reveal">
+          <img src="/assets/brand/pog-logo.png" alt="Proof of Grass" class="app-logo">
+          <p>Go outside. Prove it. Build your streak, earn rewards, and make an impact.</p>
+          <span class="app-btn">Start your streak →</span>
+        </a>
+        <a href="https://proofofgrass.app/wago-drops" target="_blank" rel="noopener" class="app-banner app-wago reveal">
+          <img src="/assets/brand/wago-drops-logo.png" alt="WAGO Drops" class="app-logo">
+          <p>Real-world treasure hunts on a live map. Find drops, prove you were there, and claim on-chain.</p>
+          <span class="app-btn app-btn-gold">Find a drop →</span>
+          <img src="/assets/brand/wago-wave.png" alt="" class="app-mascot" aria-hidden="true">
+        </a>
+        <a href="https://harvest.touchgrass.today" target="_blank" rel="noopener" class="app-banner app-harvest reveal">
+          <img src="/assets/brand/harvest-logo.png" alt="Harvest" class="app-logo">
+          <p>Plant $TOUCHGRASS and grow together toward Harvest Day.</p>
+          <span class="app-btn">Plant $TOUCHGRASS →</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
   <!-- ABOUT / MISSION -->
   <section id="about">
     <div class="section-inner">
@@ -175,9 +210,9 @@
           <div class="eco-chain">◎ On Solana</div>
           <p>The fuel of our ecosystem. Earn, trade, and grow with $TOUCHGRASS on Solana. Powers everything.</p>
         </a>
-        <a href="http://Proofofgrass.vercel.app" target="_blank" class="eco-card reveal">
+        <a href="https://proofofgrass.app" target="_blank" class="eco-card reveal">
           <div class="eco-num">4</div>
-          <h3>Proof of Grass Test</h3>
+          <h3>Proof of Grass</h3>
           <div class="eco-chain">🌿 Daily</div>
           <p>Daily touch grass check-in with a streak system. Stay consistent. Earn rewards. Prove you went outside. 100s of Daily Active Users!</p>
         </a>
@@ -349,26 +384,6 @@
   </div>
 </section>
 
-  <!-- PROOF OF GRASS -->
-  <section id="proof-of-grass">
-    <div class="section-inner">
-      <div style="text-align:center">
-        <span class="pill-label">Daily Challenge</span>
-      </div>
-      <h2 class="section-title">Proof of Grass</h2>
-      <p class="section-sub">
-        Daily touch grass check-in with a streak system. Stay consistent, earn rewards, and prove you went outside.
-      </p>
-
-      <div class="pog-card reveal">
-        <img src="/assets/pog.jpg" alt="Proof of Grass" class="pog-image">
-        <h3>Check Your Streak</h3>
-        <p>Log in daily, touch grass, submit proof. Build your streak. Earn $TOUCHGRASS rewards.</p>
-        <a href="http://Proofofgrass.vercel.app" target="_blank" class="pog-btn">Start Challenge →</a>
-      </div>
-    </div>
-  </section>
-
   <!-- BUY -->
   <section id="buy">
     <div class="section-inner">
@@ -408,6 +423,7 @@
       <span>Touch Grass</span>
     </div>
     <ul class="footer-links">
+      <li><a href="#apps">Apps</a></li>
       <li><a href="#about">About</a></li>
       <li><a href="#ecosystem">Ecosystem</a></li>
       <li><a href="#touch-counter">Clicker</a></li>
@@ -415,7 +431,7 @@
       <li><a href="#community">Community</a></li>
       <li><a href="#buy">Buy</a></li>
     </ul>
-    <p>© 2025 TouchGrass. Go outside. Touch some grass. Make a difference.</p>
+    <p>© 2026 TouchGrass. Go outside. Touch some grass. Make a difference.</p>
     <p style="margin-top:8px; color:#2a4a2a;">team@touchgrass.it.com</p>
   </footer>
 

@@ -1,0 +1,240 @@
+/* ============================================================
+   Brand layer — matches the Proof of Grass, WAGO Drops and Harvest apps.
+   Loaded after style.css. To see the previous look, remove the
+   <link rel="stylesheet" href="brand.css"> line in index.html.
+   Palette/type mirror Proofofgrass utils/v2Theme.js.
+   ============================================================ */
+
+:root {
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --font-sans: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  --sky: #e8f4fd;
+  --sky-mid: #c5e3f7;
+  --sky-deep: #a8d4f0;
+  --lime: #7dc832;
+  --lime-dark: #5ba622;
+  --grass-deep: #3d7a12;
+  --forest: #0d2a05;
+  --forest-mid: #1a4a0a;
+  --forest-light: #2d5a1a;
+  --gold: #e8a020;
+  --gold-light: #f5c04a;
+  --gold-soft: #fef3d8;
+  --off-white: #f8fbf5;
+
+  --grad-sky: linear-gradient(180deg, #c5e3f7 0%, #e8f4fd 40%, #f0f8ee 100%);
+  --grad-lime: linear-gradient(135deg, #7dc832 0%, #5ba622 100%);
+  --grad-gold: linear-gradient(135deg, #f5c04a 0%, #e8a020 100%);
+  --grad-forest: linear-gradient(180deg, #1a4a0a 0%, #0d2a05 100%);
+  --shadow-card: 0 2px 16px rgba(26,74,10,0.10), 0 1px 4px rgba(26,74,10,0.06);
+  --shadow-glow: 0 0 24px rgba(125,200,50,0.3);
+
+  --text-dark: var(--forest);
+  --text-mid: var(--forest-light);
+  --grass: var(--lime-dark);
+}
+
+body { font-family: var(--font-sans); }
+
+/* ── Type: serif display, sans body ── */
+.section-title,
+.nav-logo,
+.footer-logo,
+.hero-tagline,
+.mission-card h3, .eco-card h3, .comm-card h3, .rm-content h3, .buy-card h3,
+.clicker-count span, .grass-touch-text {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  letter-spacing: -0.005em;
+}
+.section-title { font-size: clamp(2.4rem, 6vw, 3.8rem); line-height: 1.05; }
+.hero-tagline { font-size: clamp(1.7rem, 3.6vw, 2.4rem); line-height: 1.1; }
+.nav-logo { font-size: 1.5rem; }
+.footer-logo { font-size: 1.9rem; }
+.mission-card h3, .eco-card h3, .comm-card h3, .rm-content h3, .buy-card h3 { font-size: 1.45rem; line-height: 1.15; }
+.clicker-count span { font-variant-numeric: lining-nums tabular-nums; }
+
+/* labels, buttons, small caps stay in DM Sans */
+.pill-label, .eco-num, .eco-chain, .rm-content .quarter,
+.btn-mint, .btn-collection, .copy-btn, .buy-btn, .pog-btn, .nav-wallet,
+.clicker-reset, .clicker-count small, .touch-pop, .site-preloader {
+  font-family: var(--font-sans);
+}
+
+/* ── Nav: frosted white like the app nav ── */
+nav {
+  background: rgba(255,255,255,0.88);
+  border: 1px solid rgba(255,255,255,0.7);
+  box-shadow: 0 2px 16px rgba(26,74,10,0.10);
+}
+.nav-links a { color: var(--forest); font-weight: 600; }
+.nav-links a:hover { color: var(--lime-dark); }
+.nav-wallet { background: var(--grad-lime); box-shadow: var(--shadow-glow); font-weight: 700; }
+
+/* ── Buttons: lime gradient w/ glow, gold secondary ── */
+.btn-mint, .pog-btn, .buy-btn {
+  background: var(--grad-lime);
+  box-shadow: var(--shadow-glow);
+  font-weight: 700; letter-spacing: 0.02em;
+}
+.btn-mint:hover, .pog-btn:hover { box-shadow: 0 0 32px rgba(125,200,50,0.45); }
+.btn-collection {
+  background: rgba(255,255,255,0.8);
+  color: var(--forest);
+  border: 1.5px solid rgba(125,200,50,0.4);
+  font-weight: 700;
+}
+.copy-btn { background: var(--grad-lime); color: #fff; border: none; text-shadow: none; }
+.copy-btn.copied { background: var(--grass-deep); }
+.ca-box { background: rgba(255,255,255,0.8); border: 1px solid rgba(255,255,255,0.7); }
+.ca-box label { color: var(--forest-light); }
+.pill-label { background: var(--grad-lime); letter-spacing: 0.12em; box-shadow: var(--shadow-glow); }
+
+/* ── Light sections → sky/off-white; dark → forest ── */
+#about, #touch-counter, #community, #apps { background: var(--grad-sky); }
+#ecosystem, #roadmap { background: var(--grad-forest); }
+#buy { background: linear-gradient(135deg, #0d2a05, #1a4a0a); }
+footer { background: #081a03; }
+.section-sub { color: var(--forest-light); font-size: 1.05rem; }
+#ecosystem .section-sub, #roadmap .section-sub, #buy .section-sub { color: rgba(240,239,234,0.75); }
+#ecosystem .section-title, #roadmap .section-title, #buy .section-title { color: #f0efea; }
+#about .section-title, #touch-counter .section-title, #community .section-title, #apps .section-title { color: var(--forest) !important; }
+
+/* ── Cards: glass white on light, forest on dark ── */
+.mission-card, .comm-card, .clicker-count {
+  background: rgba(255,255,255,0.82);
+  border: 1px solid rgba(255,255,255,0.7);
+  box-shadow: var(--shadow-card);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border-radius: 20px;
+}
+.mission-card p, .comm-card p { color: var(--forest-light); }
+.mission-card h3, .comm-card h3 { color: var(--forest); }
+.clicker-count small { color: var(--lime-dark); }
+.clicker-reset { border: 1.5px solid rgba(125,200,50,0.4); background: rgba(255,255,255,0.8); color: var(--forest); }
+.clicker-reset:hover { border-color: var(--lime-dark); }
+.grass-patch { border-radius: 24px; }
+
+.eco-card, .buy-card {
+  background: linear-gradient(145deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+  border: 1px solid rgba(125,200,50,0.3);
+  border-radius: 20px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.25);
+}
+.eco-card:hover, .buy-card:hover { border-color: var(--lime); }
+.eco-card h3, .buy-card h3, .rm-content h3 { color: #f0efea; }
+.eco-card p, .buy-card p, .rm-content p { color: rgba(240,239,234,0.72); }
+.eco-num { background: var(--grad-lime); }
+.eco-chain { background: rgba(125,200,50,0.15); border-color: rgba(125,200,50,0.35); color: var(--lime); }
+.rm-content .quarter { color: var(--gold-light); }
+.roadmap-track::before { background: linear-gradient(180deg, var(--lime), var(--lime-dark), var(--grass-deep)); }
+.rm-dot { background: var(--grad-lime); border-color: #0d2a05; box-shadow: var(--shadow-glow); }
+.footer-logo { color: var(--lime); }
+.footer-links a:hover { color: var(--lime); }
+
+/* ── Apps section: Proof of Grass / WAGO Drops / Harvest banners ── */
+.app-banners {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+.app-banner {
+  position: relative;
+  overflow: hidden;
+  display: flex; flex-direction: column; align-items: flex-start; gap: 14px;
+  min-height: 340px;
+  padding: 28px;
+  border-radius: 24px;
+  text-decoration: none;
+  color: var(--forest);
+  box-shadow: var(--shadow-card);
+  transition: transform 0.25s, box-shadow 0.25s;
+}
+.app-banner:hover { transform: translateY(-6px); box-shadow: 0 8px 40px rgba(26,74,10,0.18); }
+.app-logo {
+  width: min(100%, 250px);
+  height: auto;
+  filter: drop-shadow(0 4px 8px rgba(26,74,10,0.25));
+  transition: transform 0.25s;
+}
+.app-banner:hover .app-logo { transform: scale(1.04); }
+.app-banner p {
+  position: relative; z-index: 1;
+  font-size: 0.98rem; line-height: 1.55; font-weight: 500;
+  max-width: 24ch; color: var(--forest-mid);
+  flex: 1;
+}
+.app-btn {
+  position: relative; z-index: 1;
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 12px 24px; border-radius: 999px;
+  background: var(--grad-lime); color: #fff;
+  font-family: var(--font-sans); font-weight: 700; font-size: 0.95rem; letter-spacing: 0.02em;
+  box-shadow: var(--shadow-glow);
+}
+.app-btn-gold { background: var(--grad-gold); color: var(--forest); box-shadow: 0 2px 8px rgba(26,74,10,0.12); }
+
+.app-pog {
+  background:
+    linear-gradient(to top, rgba(240,248,238,0) 0%, rgba(240,248,238,0) 100%),
+    linear-gradient(160deg, #a8d4f0 0%, #d4edf8 45%, #f0f8ee 100%);
+}
+.app-pog::after {
+  content: ''; position: absolute; inset: auto 0 0 0; height: 38%;
+  background: url('/assets/brand/meadow.jpg') center bottom / cover no-repeat;
+  -webkit-mask-image: linear-gradient(to top, #000 35%, transparent);
+          mask-image: linear-gradient(to top, #000 35%, transparent);
+  opacity: 0.85; pointer-events: none;
+}
+.app-pog p { max-width: 26ch; }
+.app-wago { background: linear-gradient(160deg, #a8d4f0 0%, #d4edf8 45%, #fef3d8 100%); }
+.app-wago p { max-width: 17ch; }
+.app-mascot {
+  position: absolute; right: 6px; bottom: -4px;
+  height: 56%; width: auto;
+  filter: drop-shadow(0 6px 12px rgba(26,74,10,0.25));
+  pointer-events: none;
+  transition: transform 0.25s;
+}
+.app-wago:hover .app-mascot { transform: scale(1.05) rotate(2deg); }
+.app-harvest { background: linear-gradient(160deg, #fef3d8 0%, #f6e7b4 40%, #cfe8a8 100%); }
+.app-harvest p { max-width: 24ch; }
+
+@media (max-width: 1000px) {
+  .app-banners { grid-template-columns: 1fr; max-width: 560px; margin: 0 auto; }
+  .app-banner { min-height: 0; }
+  .app-banner p { flex: none; }
+  .app-wago { padding-bottom: 28px; }
+  .app-mascot { height: 70%; }
+}
+@media (max-width: 560px) {
+  .app-logo { width: min(100%, 220px); }
+  .app-wago p { max-width: 14ch; }
+  .app-mascot { height: 58%; right: 0; }
+  section { padding: 64px 18px; }
+}
+
+/* four mission cards in one row on desktop */
+.mission-grid { grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
+
+/* keep WAGO's copy clear of the mascot */
+.app-wago p { max-width: 15ch; }
+.app-mascot { height: 50%; }
+@media (max-width: 1000px) { .app-wago p { max-width: 22ch; } .app-mascot { height: 62%; } }
+@media (max-width: 560px) { .app-wago p { max-width: 15ch; } .app-mascot { height: 52%; } }
+
+/* phones: the hero copy sits over trees, so give it a frosted panel for legibility */
+@media (max-width: 900px) {
+  .hero-content {
+    width: calc(100% - 28px);
+    padding: 20px 16px;
+    background: rgba(255,255,255,0.78);
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.8);
+    border-radius: 24px;
+    box-shadow: var(--shadow-card);
+  }
+  .hero-tagline { font-size: clamp(1.6rem, 6.5vw, 2rem); text-shadow: none; }
+  .hero-sub { text-shadow: none; }
+}
