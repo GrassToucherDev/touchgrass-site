@@ -1,3 +1,10 @@
+// Start at the top on load / back-forward cache restore (unless deep-linked)
+(function () {
+  const toTop = () => { if (!location.hash) { document.documentElement.style.scrollBehavior = 'auto'; window.scrollTo(0, 0); requestAnimationFrame(() => { document.documentElement.style.scrollBehavior = ''; }); } };
+  window.addEventListener('load', toTop);
+  window.addEventListener('pageshow', (e) => { if (e.persisted) toTop(); });
+})();
+
 function preloadImage(src) {
   return new Promise((resolve) => {
     const img = new Image();
