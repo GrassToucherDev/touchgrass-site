@@ -396,3 +396,75 @@ footer { background: #081a03; }
 
 /* the sleeping WAGO artwork already includes its own "zzz" */
 .wago-zzz { display: none; }
+
+/* ============ Phones: swipeable card carousels instead of tall stacks ============ */
+.carousel-dots { display: none; }
+
+@media (max-width: 800px) {
+  .mission-grid, .eco-grid, .community-cards {
+    display: flex; flex-wrap: nowrap; justify-content: flex-start;
+    gap: 14px;
+    overflow-x: auto; overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    /* bleed to the screen edges so the next card peeks in */
+    margin: 28px -24px 0; padding: 6px 24px 18px;
+    scroll-padding-inline: 24px;
+  }
+  .mission-grid::-webkit-scrollbar, .eco-grid::-webkit-scrollbar, .community-cards::-webkit-scrollbar { display: none; }
+
+  .mission-grid > .mission-card,
+  .eco-grid > .eco-card {
+    flex: 0 0 78%; max-width: 340px;
+    scroll-snap-align: start;
+    opacity: 1 !important; transform: none !important;  /* don't wait for scroll-reveal inside a scroller */
+  }
+  .community-cards > .comm-card {
+    flex: 0 0 62%; min-width: 0; max-width: 260px;
+    scroll-snap-align: start;
+    padding: 26px 18px;
+    opacity: 1 !important; transform: none !important;
+  }
+  .mission-card, .eco-card { padding: 24px 20px; }
+
+  .carousel-dots {
+    display: flex; justify-content: center; align-items: center; gap: 8px;
+    margin-top: 4px;
+  }
+  .carousel-dots button {
+    width: 8px; height: 8px; padding: 0; border: 0; border-radius: 999px;
+    background: rgba(13,42,5,0.22); cursor: pointer;
+    transition: width 0.25s, background 0.25s;
+  }
+  .carousel-dots button.is-active { width: 24px; background: var(--lime-dark); }
+  #ecosystem .carousel-dots button { background: rgba(240,239,234,0.28); }
+  #ecosystem .carousel-dots button.is-active { background: var(--lime); }
+  .carousel-count {
+    font-family: var(--font-sans); font-weight: 700; font-size: 0.85rem; color: var(--forest-light);
+    padding: 4px 14px; border-radius: 999px; background: rgba(255,255,255,0.7);
+  }
+}
+@media (max-width: 560px) {
+  .mission-grid, .eco-grid, .community-cards { margin-left: -18px; margin-right: -18px; padding-left: 18px; padding-right: 18px; scroll-padding-inline: 18px; }
+}
+
+/* "Swipe →" hint under phone carousels */
+.swipe-hint { display: none; }
+@media (max-width: 800px) {
+  .swipe-hint {
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    margin: -2px 0 10px;
+    font-family: var(--font-sans); font-weight: 800; font-size: 0.8rem;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--forest-light);
+    transition: opacity 0.4s, max-height 0.4s, margin 0.4s;
+    max-height: 30px;
+  }
+  .swipe-hint i { font-style: normal; font-size: 1.1rem; animation: swipeNudge 1.3s ease-in-out infinite; }
+  .swipe-hint.is-gone { opacity: 0; max-height: 0; margin: 0; overflow: hidden; }
+  #ecosystem .swipe-hint { color: rgba(240,239,234,0.8); }
+}
+@keyframes swipeNudge { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(8px); } }
+@media (prefers-reduced-motion: reduce) { .swipe-hint i { animation: none; } }

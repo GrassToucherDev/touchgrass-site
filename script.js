@@ -276,6 +276,57 @@ grassReset?.addEventListener('click', () => {
   sleepSoon();
 });
 
+// ── Phone carousels: dots (or a counter for long lists) that follow the swipe ──
+document.querySelectorAll('.mission-grid, .eco-grid, .community-cards').forEach((track) => {
+  const cards = Array.from(track.children);
+  if (cards.length < 2) return;
+  const nav = document.createElement('div');
+  nav.className = 'carousel-dots';
+  nav.setAttribute('aria-hidden', 'true');
+  const useCounter = cards.length > 6;
+  let counter = null;
+  let dots = [];
+  if (useCounter) {
+    counter = document.createElement('span');
+    counter.className = 'carousel-count';
+    nav.appendChild(counter);
+  } else {
+    dots = cards.map((_, i) => {
+      const b = document.createElement('button');
+      b.type = 'button'; b.tabIndex = -1;
+      b.addEventListener('click', () => track.scrollTo({ left: cards[i].offsetLeft - track.offsetLeft - parseFloat(getComputedStyle(track).paddingLeft), behavior: 'smooth' }));
+      nav.appendChild(b);
+      return b;
+    });
+  }
+  track.after(nav);
+
+  // One-time "swipe" hint under the track; fades out as soon as the user scrolls it.
+  const hint = document.createElement('p');
+  hint.className = 'swipe-hint';
+  hint.setAttribute('aria-hidden', 'true');
+  hint.innerHTML = '<span>Swipe</span><i>&rarr;</i>';
+  nav.before(hint);
+  const dismissHint = () => hint.classList.add('is-gone');
+  track.addEventListener('scroll', () => { if (track.scrollLeft > 24) dismissHint(); }, { passive: true, once: false });
+  track.addEventListener('touchstart', dismissHint, { passive: true, once: true });
+
+  let ticking = false;
+  function update() {
+    ticking = false;
+    const step = cards[1].offsetLeft - cards[0].offsetLeft;
+    let idx = step > 0 ? Math.round(track.scrollLeft / step) : 0;
+    const max = track.scrollWidth - track.clientWidth;
+    if (max > 0 && track.scrollLeft >= max - 4) idx = cards.length - 1;
+    idx = Math.max(0, Math.min(cards.length - 1, idx));
+    if (counter) counter.textContent = (idx + 1) + ' / ' + cards.length;
+    dots.forEach((d, i) => d.classList.toggle('is-active', i === idx));
+  }
+  track.addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+  window.addEventListener('resize', update);
+  update();
+});
+
 // Scroll reveal
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(el => {
