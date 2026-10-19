@@ -301,6 +301,16 @@ document.querySelectorAll('.mission-grid, .eco-grid, .community-cards').forEach(
   }
   track.after(nav);
 
+  // One-time "swipe" hint under the track; fades out as soon as the user scrolls it.
+  const hint = document.createElement('p');
+  hint.className = 'swipe-hint';
+  hint.setAttribute('aria-hidden', 'true');
+  hint.innerHTML = '<span>Swipe</span><i>&rarr;</i>';
+  nav.before(hint);
+  const dismissHint = () => hint.classList.add('is-gone');
+  track.addEventListener('scroll', () => { if (track.scrollLeft > 24) dismissHint(); }, { passive: true, once: false });
+  track.addEventListener('touchstart', dismissHint, { passive: true, once: true });
+
   let ticking = false;
   function update() {
     ticking = false;
