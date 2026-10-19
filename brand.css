@@ -245,3 +245,154 @@ footer { background: #081a03; }
 .app-logo, .app-mascot { filter: none; transition: none; }
 .app-banner:hover .app-logo, .app-wago:hover .app-mascot { transform: none; }
 .app-banner.reveal { will-change: auto; }
+
+/* ============ Interactive clicker: WAGO reacts to every touch ============ */
+.grass-clicker { gap: 14px; }
+
+.clicker-count { min-width: min(100%, 380px); padding: 20px 28px 18px; }
+.clicker-rank { margin-top: 14px; display: grid; gap: 6px; justify-items: center; }
+.clicker-rank strong {
+  font-family: var(--font-serif); font-size: 1.5rem; font-weight: 700; color: var(--forest);
+  line-height: 1;
+}
+.rank-bar {
+  width: 100%; max-width: 260px; height: 10px; border-radius: 999px;
+  background: rgba(125,200,50,0.18); overflow: hidden;
+}
+.rank-bar i {
+  display: block; height: 100%; width: 0; border-radius: 999px;
+  background: var(--grad-lime); box-shadow: var(--shadow-glow);
+  transition: width 0.35s cubic-bezier(.2,.9,.3,1.2);
+}
+.clicker-rank em { font-style: normal; font-size: 0.8rem; font-weight: 600; color: var(--forest-light); }
+
+.clicker-stage { position: relative; width: min(100%, 360px); }
+
+.grass-patch {
+  width: 100%;
+  aspect-ratio: 1;
+  background:
+    radial-gradient(circle at 50% 22%, rgba(255,230,140,0.55), transparent 42%),
+    linear-gradient(180deg, #bfe6fb 0%, #e0f3fd 46%, #8fd66a 46.5%, #5ba622 74%, #3d7a12 100%);
+  box-shadow: inset 0 -16px 28px rgba(13,42,5,0.28), 0 14px 34px rgba(26,74,10,0.22);
+  -webkit-tap-highlight-color: transparent;
+  user-select: none; -webkit-user-select: none;
+}
+.grass-blades { opacity: 0.55; mix-blend-mode: soft-light; }
+.grass-patch.is-pressed { animation: patchPress 0.18s ease-out; transform: none; }
+.grass-patch.is-shake { animation: patchShake 0.45s ease-out; }
+.grass-patch.is-sleeping { background:
+    radial-gradient(circle at 50% 22%, rgba(180,200,255,0.4), transparent 42%),
+    linear-gradient(180deg, #7aa2d6 0%, #a9c4e6 46%, #5e9f4a 46.5%, #3f7f2f 74%, #2c5e1f 100%); }
+
+.wago-pose {
+  position: absolute; z-index: 1;
+  left: 50%; bottom: 16%;
+  height: 78%; width: auto;
+  transform: translateX(-50%);
+  transform-origin: 50% 100%;
+  pointer-events: none;
+  animation: wagoIdle 2.6s ease-in-out infinite;
+}
+.grass-patch.is-sleeping .wago-pose { animation: wagoSleep 3.4s ease-in-out infinite; height: 70%; }
+.wago-pose.is-squash { animation: wagoSquash 0.34s cubic-bezier(.2,.9,.3,1.3); }
+
+.wago-zzz {
+  position: absolute; z-index: 2; right: 14%; top: 14%;
+  font-family: var(--font-serif); font-weight: 700; font-size: 2rem; color: #fff;
+  text-shadow: 0 2px 8px rgba(13,42,5,0.5);
+  opacity: 0; pointer-events: none;
+}
+.wago-zzz b { display: inline-block; margin-left: 2px; font-size: 1.3em; }
+.grass-patch.is-sleeping .wago-zzz { opacity: 1; animation: zzzFloat 2.4s ease-in-out infinite; }
+
+.grass-touch-text {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 3; min-height: 0;
+  padding: 0 0 16px; font-size: clamp(1.4rem, 5vw, 2rem);
+  text-shadow: 0 2px 10px rgba(13,42,5,0.6);
+}
+
+/* particles */
+.touch-fx {
+  position: absolute; z-index: 4; left: var(--x); top: var(--y);
+  width: 26px; height: 26px; object-fit: contain; pointer-events: none;
+  animation: fxFly 0.85s cubic-bezier(.15,.8,.3,1) forwards;
+}
+.touch-pop { z-index: 5; font-family: var(--font-sans); font-size: 1.15rem; }
+
+/* speech bubble + combo badge */
+.clicker-bubble {
+  position: absolute; z-index: 6; left: 50%; top: -14px;
+  transform: translate(-50%, -100%);
+  max-width: 92%; width: max-content;
+  padding: 10px 16px; border-radius: 18px;
+  background: #fff; color: var(--forest);
+  font-weight: 700; font-size: 0.95rem; line-height: 1.25; text-align: center;
+  box-shadow: 0 6px 22px rgba(26,74,10,0.22);
+  pointer-events: none;
+}
+.clicker-bubble::after {
+  content: ''; position: absolute; left: 50%; bottom: -8px; width: 16px; height: 16px;
+  background: #fff; transform: translateX(-50%) rotate(45deg); border-radius: 3px;
+}
+.clicker-bubble[hidden] { display: none; }
+.clicker-bubble.is-pop { animation: bubblePop 0.3s cubic-bezier(.2,.9,.3,1.4); }
+
+.clicker-combo {
+  position: absolute; z-index: 6; right: 10px; top: 10px;
+  padding: 6px 14px; border-radius: 999px;
+  background: var(--grad-gold); color: var(--forest);
+  font-family: var(--font-sans); font-weight: 800; font-size: 1.05rem;
+  box-shadow: 0 4px 14px rgba(26,74,10,0.25);
+  opacity: 0; transform: scale(0.6); pointer-events: none;
+  transition: opacity 0.2s, transform 0.2s;
+}
+.clicker-combo.is-on { opacity: 1; transform: scale(1); }
+.clicker-combo.is-hot { background: linear-gradient(135deg, #ffb347, #f07020); color: #fff; }
+.clicker-combo.is-bump { animation: comboBump 0.18s ease-out; }
+
+@keyframes wagoIdle {
+  0%, 100% { transform: translateX(-50%) translateY(0) scale(1, 1); }
+  50% { transform: translateX(-50%) translateY(-6px) scale(1.015, 0.985); }
+}
+@keyframes wagoSleep {
+  0%, 100% { transform: translateX(-50%) scale(1, 1); }
+  50% { transform: translateX(-50%) scale(1.02, 1.04); }
+}
+@keyframes wagoSquash {
+  0% { transform: translateX(-50%) scale(1, 1); }
+  25% { transform: translateX(-50%) translateY(2px) scale(1.14, 0.84); }
+  60% { transform: translateX(-50%) translateY(-18px) scale(0.92, 1.1); }
+  100% { transform: translateX(-50%) translateY(0) scale(1, 1); }
+}
+@keyframes patchPress { 0% { transform: scale(1); } 40% { transform: scale(0.975); } 100% { transform: scale(1); } }
+@keyframes patchShake {
+  0%, 100% { transform: translate(0); }
+  20% { transform: translate(-5px, 2px) rotate(-1deg); }
+  40% { transform: translate(5px, -2px) rotate(1deg); }
+  60% { transform: translate(-3px, 1px); }
+  80% { transform: translate(3px, -1px); }
+}
+@keyframes zzzFloat {
+  0% { transform: translate(0, 6px) scale(0.9); opacity: 0; }
+  30% { opacity: 1; }
+  100% { transform: translate(10px, -22px) scale(1.15); opacity: 0; }
+}
+@keyframes fxFly {
+  0% { opacity: 1; transform: translate(-50%, -50%) scale(0.5) rotate(0); }
+  100% { opacity: 0; transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy) + 40px)) scale(1.1) rotate(var(--rot)); }
+}
+@keyframes bubblePop { 0% { transform: translate(-50%, -100%) scale(0.5); } 100% { transform: translate(-50%, -100%) scale(1); } }
+@keyframes comboBump { 0% { transform: scale(1.35); } 100% { transform: scale(1); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .wago-pose, .grass-patch.is-sleeping .wago-pose, .wago-zzz { animation: none !important; }
+  .touch-fx { display: none; }
+}
+@media (max-width: 560px) {
+  .clicker-bubble { font-size: 0.88rem; padding: 8px 12px; }
+  .clicker-stage { margin-top: 36px; }
+}
+
+/* the sleeping WAGO artwork already includes its own "zzz" */
+.wago-zzz { display: none; }
