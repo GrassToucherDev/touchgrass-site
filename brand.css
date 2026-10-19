@@ -238,3 +238,10 @@ footer { background: #081a03; }
   .hero-tagline { font-size: clamp(1.6rem, 6.5vw, 2rem); text-shadow: none; }
   .hero-sub { text-shadow: none; }
 }
+
+/* iOS Safari fix: a drop-shadow filter on images inside the fading-in (.reveal) banners
+   was painting a faint rectangle behind each logo. The artwork already has its own
+   outlines, so drop the filters and the image transitions. */
+.app-logo, .app-mascot { filter: none; transition: none; }
+.app-banner:hover .app-logo, .app-wago:hover .app-mascot { transform: none; }
+.app-banner.reveal { will-change: auto; }
