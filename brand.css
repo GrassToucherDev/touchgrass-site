@@ -6,8 +6,8 @@
    ============================================================ */
 
 :root {
-  --font-serif: 'Cormorant Garamond', Georgia, serif;
-  --font-sans: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-serif: 'Fredoka', 'Nunito', system-ui, sans-serif;   /* playful rounded display face (name kept for the existing rules) */
+  --font-sans: 'Nunito', 'DM Sans', system-ui, sans-serif;     /* rounded, friendly body face */
 
   --sky: #e8f4fd;
   --sky-mid: #c5e3f7;
@@ -35,7 +35,7 @@
   --grass: var(--lime-dark);
 }
 
-body { font-family: var(--font-sans); }
+body { font-family: var(--font-sans); font-weight: 500; }
 
 /* ── Type: serif display, sans body ── */
 .section-title,
@@ -45,17 +45,17 @@ body { font-family: var(--font-sans); }
 .mission-card h3, .eco-card h3, .comm-card h3, .rm-content h3, .buy-card h3,
 .clicker-count span, .grass-touch-text {
   font-family: var(--font-serif);
-  font-weight: 700;
-  letter-spacing: -0.005em;
+  font-weight: 600;
+  letter-spacing: 0;
 }
-.section-title { font-size: clamp(2.4rem, 6vw, 3.8rem); line-height: 1.05; }
-.hero-tagline { font-size: clamp(1.7rem, 3.6vw, 2.4rem); line-height: 1.1; }
-.nav-logo { font-size: 1.5rem; }
-.footer-logo { font-size: 1.9rem; }
-.mission-card h3, .eco-card h3, .comm-card h3, .rm-content h3, .buy-card h3 { font-size: 1.45rem; line-height: 1.15; }
+.section-title { font-size: clamp(2.1rem, 5.4vw, 3.3rem); line-height: 1.1; }
+.hero-tagline { font-size: clamp(1.5rem, 3.2vw, 2.1rem); line-height: 1.15; }
+.nav-logo { font-size: 1.35rem; }
+.footer-logo { font-size: 1.7rem; }
+.mission-card h3, .eco-card h3, .comm-card h3, .rm-content h3, .buy-card h3 { font-size: 1.25rem; line-height: 1.2; }
 .clicker-count span { font-variant-numeric: lining-nums tabular-nums; }
 
-/* labels, buttons, small caps stay in DM Sans */
+/* labels and buttons use the rounded body face */
 .pill-label, .eco-num, .eco-chain, .rm-content .quarter,
 .btn-mint, .btn-collection, .copy-btn, .buy-btn, .pog-btn, .nav-wallet,
 .clicker-reset, .clicker-count small, .touch-pop, .site-preloader {
@@ -219,7 +219,7 @@ footer { background: #081a03; }
 .mission-grid { grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
 
 /* keep WAGO's copy clear of the mascot */
-.app-wago p { max-width: 15ch; }
+.app-wago p { max-width: 16ch; }
 .app-mascot { height: 50%; }
 @media (max-width: 1000px) { .app-wago p { max-width: 22ch; } .app-mascot { height: 62%; } }
 @media (max-width: 560px) { .app-wago p { max-width: 15ch; } .app-mascot { height: 52%; } }
@@ -252,7 +252,7 @@ footer { background: #081a03; }
 .clicker-count { min-width: min(100%, 380px); padding: 20px 28px 18px; }
 .clicker-rank { margin-top: 14px; display: grid; gap: 6px; justify-items: center; }
 .clicker-rank strong {
-  font-family: var(--font-serif); font-size: 1.5rem; font-weight: 700; color: var(--forest);
+  font-family: var(--font-serif); font-size: 1.3rem; font-weight: 600; color: var(--forest);
   line-height: 1;
 }
 .rank-bar {
@@ -299,7 +299,7 @@ footer { background: #081a03; }
 
 .wago-zzz {
   position: absolute; z-index: 2; right: 14%; top: 14%;
-  font-family: var(--font-serif); font-weight: 700; font-size: 2rem; color: #fff;
+  font-family: var(--font-serif); font-weight: 600; font-size: 2rem; color: #fff;
   text-shadow: 0 2px 8px rgba(13,42,5,0.5);
   opacity: 0; pointer-events: none;
 }
