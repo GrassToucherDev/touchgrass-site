@@ -576,8 +576,7 @@ footer { background: #081a03; }
 }
 
 /* ── ILLUSTRATED SECTIONS ── */
-#apps,#about,#community,#touch-counter{position:relative;overflow:hidden;
- background:linear-gradient(180deg,#cfe9fb 0%,rgba(207,233,251,.88) 30%,rgba(207,233,251,0) 66%),url('/assets/hero/bg.jpg') 62% bottom/cover no-repeat,#9ed0f5}
+#apps,#about,#community,#touch-counter{position:relative;overflow:hidden}
 #apps>*,#about>*,#community>*,#touch-counter>*,#ecosystem>*,#roadmap>*,#buy>*{position:relative;z-index:1}
 #apps::after,#community::after{content:'';position:absolute;left:0;right:0;bottom:-2px;height:clamp(64px,10vw,150px);background:url('/assets/hero/grass.png') center bottom/auto 100% repeat-x;pointer-events:none;z-index:2}
 #apps,#community{padding-bottom:clamp(120px,24vw,200px)}
@@ -599,3 +598,11 @@ footer { background: #081a03; }
 img.st-slogan{position:absolute;right:2%;top:calc(80px + 0.86 * min(80vw,520px));width:min(50vw,320px);height:auto;transform:rotate(-2deg);z-index:3;filter:drop-shadow(0 6px 10px rgba(0,30,0,.35))}
 .about-wago{width:min(70vw,340px);margin:0 auto -30px}
 @media (min-width:801px){img.st-slogan{top:auto;bottom:30%;right:3%;width:min(25vw,340px)}.about-wago{width:360px;margin-bottom:-50px}}
+
+/* ── per-section scenes ── */
+#apps{background:linear-gradient(180deg,#d5ecfc 0%,rgba(213,236,252,.88) 30%,rgba(213,236,252,0) 62%),url('/assets/hero/bg-barn.jpg') 50% bottom/cover no-repeat,#7cc4f5}
+#about{background:linear-gradient(180deg,#ffeccf 0%,rgba(255,236,207,.9) 30%,rgba(255,236,207,0) 64%),url('/assets/hero/bg-field.jpg') 50% bottom/cover no-repeat,#f7b36a}
+#touch-counter{background:linear-gradient(180deg,#d5ecfc 0%,rgba(213,236,252,.85) 28%,rgba(213,236,252,0) 62%),url('/assets/hero/bg-meadow.jpg') 50% bottom/cover no-repeat,#5fb4f4}
+#community{background:linear-gradient(180deg,#fde6dc 0%,rgba(253,230,220,.92) 30%,rgba(253,230,220,0) 64%),url('/assets/hero/bg-camp.jpg') 50% bottom/cover no-repeat,#8b6ac8;padding-bottom:clamp(60px,10vw,110px)}
+#community::after{display:none}
+.pre-footer{background:linear-gradient(180deg,rgba(10,20,40,.35),rgba(10,20,40,0) 60%),url('/assets/hero/bg-forest.jpg') 50% bottom/cover no-repeat,#16254a}
