@@ -14,7 +14,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="style.css?v=preload-1">
   <!-- Brand layer: matches the Proof of Grass / WAGO Drops / Harvest apps. Remove this one line to see the previous look. -->
-  <link rel="stylesheet" href="brand.css?v=1">
+  <link rel="stylesheet" href="brand.css?v=2">
 </head>
 <body class="is-loading">
 
@@ -44,65 +44,41 @@
   </nav>
 
   <!-- HERO -->
-  <section id="hero">
-    <div class="sun"></div>
-    <div class="sun-rays"></div>
+  <section id="hero" class="hero2">
+    <h1 class="sr-only">touch grass — A brighter internet starts outside</h1>
+    <div class="hero2-art" role="img" aria-label="Touch Grass: a brighter internet starts outside. WAGO relaxing in a sunny meadow. Real people. Real places. A brighter tomorrow."></div>
+    <div class="hero2-ctas">
+      <a href="#apps" class="pill pill-white">🍃 Explore the Ecosystem <span>→</span></a>
+      <a href="https://proofofgrass.app" target="_blank" rel="noopener" class="pill pill-lime">📷 Start Your Proof <span>→</span></a>
+    </div>
+  </section>
 
-    <!-- Clouds -->
-    <div class="cloud c1"></div>
-    <div class="cloud c2"></div>
-    <div class="cloud c3"></div>
-
-    <!-- Floating Elements -->
-    <div class="float-el fe-coin-l">
-      <img src="/assets/coin-bronze-3d.png" alt="Bronze Coin Icon">
+  <section id="hero-more" class="hero2-more">
+    <div class="parch-strip">
+      <a href="https://proofofgrass.app" target="_blank" rel="noopener"><img src="/assets/hero/ic-pog.png" alt=""><b>Proof of<br>Grass</b></a>
+      <a href="https://proofofgrass.app/wago-drops" target="_blank" rel="noopener"><img src="/assets/hero/ic-wago.png" alt=""><b>WAGO<br>Drops</b></a>
+      <a href="https://harvest.touchgrass.today" target="_blank" rel="noopener"><img src="/assets/hero/ic-harvest.png" alt=""><b>Harvest</b></a>
+      <a href="https://gravemarket.io/collection/screen-touchers" target="_blank" rel="noopener"><img src="/assets/hero/ic-nfts.png" alt=""><b>NFTs</b></a>
+      <a href="#buy"><img src="/assets/hero/ic-coin.png" alt=""><b>$TOUCHGRASS</b></a>
     </div>
-    <div class="float-el fe-coin-r">
-      <img src="/assets/coin-bronze-3d.png" alt="Gold Coin Icon">
-    </div>
-    <div class="float-el fe-sol">
-      <img src="/assets/solana-icon-3d.png" alt="Solana Icon">
-    </div>
-    <div class="float-el fe-tree-l">
-      <img src="/assets/tree-green-3d.png" alt="Tree Left Icon">
-    </div>
-    <div class="float-el fe-tree-r">
-      <img src="/assets/tree-green-dark-3d.png" alt="Tree Right Icon">
-    </div>
-    <div class="float-el fe-butterfly-1">
-      <img src="/assets/butterfly-purple-3d.png" alt="Butterfly 1 Icon">
-    </div>
-    <div class="float-el fe-butterfly-2">
-      <img src="assets/butterfly-small-3d.png" alt="Butterfly 2 Icon">
-    </div>
-    <div class="float-el fe-butterfly-3">
-      <img src="/assets/butterfly-small-3d.png" alt="Butterfly 3 Icon">
-    </div>
-    <!-- Content -->
-    <div class="hero-content">
-      <h1 class="bubble-title">touch grass</h1>
-
-      <p class="hero-tagline">Real impact starts the second you log off.</p>
-
-      <p class="hero-sub">
-        Functional NFTs that blend meme culture with purpose. Every mint funds youth athletics and environmental sustainability because the internet is great, but the outdoors is better.
-      </p>
-
-      <p class="hero-cta2">Go outside. Touch some grass. Prove it. Make a difference.</p>
-
+    <div class="more-intro">
+      <h2>More Outdoors.<br>More Good.</h2>
+      <p>Functional NFTs that blend meme culture with purpose. Every mint funds youth athletics and environmental sustainability because the internet is great, but the outdoors is better.</p>
       <div class="ca-box">
         <label>SOLANA CA:</label>
         <span id="ca-text">5314GTpDziP2ZdaANnt5KJEABGXy5Nn5Kyc3SFPYpump</span>
         <button class="copy-btn" id="copyBtn">Copy</button>
       </div>
-
       <div class="hero-btns">
         <a href="https://gravemint.io/mint/nrdou0?x=none" target="_blank" class="btn-mint">Mint Now</a>
         <a href="https://gravemarket.io/collection/screen-touchers" class="btn-collection">View Collection</a>
       </div>
     </div>
-
-    <div class="grass-ground"></div>
+    <div class="hero-cards">
+      <a class="hcard" href="https://proofofgrass.app" target="_blank" rel="noopener" style="--img:url(/assets/hero/card-pog.jpg)"><div><h3>📷 Proof of Grass</h3><p>Build your streak, earn rewards, and be part of a global movement to get outside.</p></div><i>→</i></a>
+      <a class="hcard" href="https://proofofgrass.app/wago-drops" target="_blank" rel="noopener" style="--img:url(/assets/hero/card-wago.jpg)"><div><h3>📍 WAGO Drops</h3><p>Find real-world drops, claim rewards, and earn Grass Tickets.</p></div><i>→</i></a>
+      <a class="hcard" href="https://harvest.touchgrass.today" target="_blank" rel="noopener" style="--img:url(/assets/hero/card-harvest.jpg)"><div><h3>🌱 Harvest</h3><p>Stake, grow, and help lock supply while supporting a healthier future.</p></div><i>→</i></a>
+    </div>
   </section>
 
   <!-- APPS -->
