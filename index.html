@@ -236,14 +236,23 @@
         <div class="clicker-count" aria-live="polite">
           <span id="grassClickCount">0</span>
           <small>grass touches</small>
+          <div class="clicker-rank">
+            <strong id="clickerRank">Indoor Kid</strong>
+            <div class="rank-bar" aria-hidden="true"><i id="clickerProgress"></i></div>
+            <em id="clickerNext">10 more to reach Curious Sprout</em>
+          </div>
         </div>
-        <button class="grass-patch" id="grassPatch" type="button" aria-label="Touch the grass">
-          <span class="grass-blades" aria-hidden="true"></span>
-          <img src="/assets/pog-icon.png" alt="" class="grass-clicker-mascot">
-          <img src="/assets/leaf-green-3d.png" alt="" class="clicker-leaf clicker-leaf-left">
-          <img src="/assets/leaf-green-3d.png" alt="" class="clicker-leaf clicker-leaf-right">
-          <span class="grass-touch-text">touch grass</span>
-        </button>
+
+        <div class="clicker-stage">
+          <div class="clicker-bubble" id="clickerBubble" role="status" hidden></div>
+          <div class="clicker-combo" id="clickerCombo" aria-hidden="true"></div>
+          <button class="grass-patch" id="grassPatch" type="button" aria-label="Touch the grass">
+            <span class="grass-blades" aria-hidden="true"></span>
+            <img src="/assets/brand/wago-wave.png" alt="" class="wago-pose" id="wagoPose" draggable="false">
+            <span class="wago-zzz" aria-hidden="true">z<b>z</b><b>Z</b></span>
+            <span class="grass-touch-text">touch grass</span>
+          </button>
+        </div>
         <button class="clicker-reset" id="grassReset" type="button">Reset counter</button>
       </div>
     </div>
