@@ -69,7 +69,9 @@ const POSES = {
   sleep: '/assets/brand/wago-sleep.png',
   salute: '/assets/brand/wago-salute.png',
   camera: '/assets/brand/wago-camera.png',
-  shrug: '/assets/brand/wago-shrug.png'
+  shrug: '/assets/brand/wago-shrug.png',
+  touch: '/assets/brand/wago-touch.png',
+  dizzy: '/assets/brand/wago-dizzy.png'
 };
 Object.values(POSES).forEach((src) => { const i = new Image(); i.src = src; });
 
@@ -261,7 +263,7 @@ grassPatch?.addEventListener('click', (event) => {
 
   const special = celebrate(prev, next, x, y);
   if (!special && !woke) {
-    setPose('cheer', combo >= 3 ? 500 : 280);
+    setPose(combo >= 10 ? 'dizzy' : combo >= 3 ? 'cheer' : 'touch', combo >= 3 ? 500 : 320);
     if (next % 7 === 0) say(TAP_LINES[Math.floor(Math.random() * TAP_LINES.length)], 1400);
   }
   sleepSoon();
