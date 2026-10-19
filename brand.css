@@ -518,29 +518,44 @@ footer { background: #081a03; }
   .app-banners, .buy-options, .roadmap-track { margin-left: -18px; margin-right: -18px; padding-left: 18px; padding-right: 18px; scroll-padding-inline: 18px; }
 }
 
-/* ── HERO V2 (illustrated) ── */
+/* ── HERO V2 (layered illustration) ── */
 .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-#hero.hero2{min-height:0;display:block;padding:0;background:#189bfc;overflow:hidden;position:relative}
+#hero.hero2{min-height:0;display:block;padding:0;background:#2f7d1c;overflow:hidden;position:relative}
 #hero.hero2::before{display:none}
-.hero2-art{width:100%;aspect-ratio:851/750;background:url('/assets/hero/hero-art.jpg') center bottom/100% auto no-repeat;margin-top:0;padding-top:92px;box-sizing:content-box}
-.hero2-ctas{display:flex;gap:12px;justify-content:center;padding:14px 16px 22px;background:linear-gradient(#4a8f1f,#3d7a18);flex-wrap:wrap}
+.stage{position:relative;width:100%;height:clamp(700px,178vw,980px);overflow:hidden;background:#3a9ef0}
+.stage img{position:absolute;display:block;user-select:none;-webkit-user-drag:none}
+.st-bg{inset:0;width:100%;height:100%;object-fit:cover;object-position:62% 50%}
+.st-sun{position:absolute;inset:0;background:radial-gradient(circle at 78% 42%,rgba(255,240,170,.35),transparent 38%);mix-blend-mode:screen;animation:sunpulse 6s ease-in-out infinite}
+.st-logo{top:84px;left:50%;width:min(80vw,520px);transform:translateX(-50%);filter:drop-shadow(0 8px 14px rgba(0,40,0,.35))}
+.st-wago{left:-8%;bottom:13%;width:min(74vw,560px);transform-origin:50% 90%;animation:wagobob 4.5s ease-in-out infinite;filter:drop-shadow(0 10px 14px rgba(0,40,0,.35))}
+.st-slogan{position:absolute;right:4%;top:calc(84px + 0.9 * min(80vw,520px));z-index:3;margin:0;transform:rotate(-6deg);text-align:left;font-family:var(--font-serif);font-weight:700;text-transform:uppercase;color:#fff;line-height:1.02;font-size:clamp(1.2rem,5.6vw,2.2rem);text-shadow:2px 2px 0 #0d2a05,-2px 2px 0 #0d2a05,2px -2px 0 #0d2a05,-2px -2px 0 #0d2a05,0 6px 14px rgba(0,0,0,.4)}
+.st-slogan span{display:block}
+.st-slogan::after{content:'';display:block;height:7px;width:78%;margin-top:6px;border-radius:6px;background:#8de84a;box-shadow:0 2px 0 #0d2a05;transform:rotate(-2deg)}
+.st-grass{left:0;bottom:-2px;width:max(100%,900px);left:50%;transform:translateX(-50%);animation:grasssway 7s ease-in-out infinite;transform-origin:50% 100%}
+@keyframes wagobob{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-8px) rotate(-1deg)}}
+@keyframes sunpulse{0%,100%{opacity:.6}50%{opacity:1}}
+@keyframes grasssway{0%,100%{transform:translateX(-50%) skewX(0)}50%{transform:translateX(-50%) skewX(.6deg)}}
+@media (prefers-reduced-motion:reduce){.st-wago,.st-sun,.st-grass{animation:none}}
+.hero2-ctas{display:flex;gap:12px;justify-content:center;padding:14px 16px 26px;background:linear-gradient(#3f8a1d,#2f7416);flex-wrap:wrap;position:relative;z-index:3}
 .pill{display:inline-flex;align-items:center;gap:8px;padding:14px 24px;border-radius:999px;font-family:var(--font-serif);font-weight:700;font-size:1.05rem;text-decoration:none;color:#0d2a05;box-shadow:0 6px 0 rgba(13,42,5,.28),0 10px 20px rgba(0,0,0,.15);transition:transform .15s}
 .pill:hover{transform:translateY(-2px)}
 .pill-white{background:#fff}.pill-lime{background:#8de84a}
-.hero2-more{background:#fdf5e2;position:relative;padding:0 0 40px}
-.parch-strip{display:flex;justify-content:center;gap:clamp(6px,2.5vw,36px);padding:22px 12px 14px;background:#fdf5e2;
- clip-path:polygon(0 8px,4% 0,9% 7px,15% 1px,22% 8px,30% 0,38% 7px,47% 1px,55% 8px,63% 0,72% 7px,80% 1px,88% 8px,95% 0,100% 6px,100% 100%,0 100%);margin-top:-8px;position:relative}
-.parch-strip a{display:flex;flex-direction:column;align-items:center;text-decoration:none;color:#0d2a05;text-align:center;flex:1;max-width:150px;min-width:0}
-.parch-strip img{width:100%;max-width:92px;-webkit-mask-image:radial-gradient(closest-side,#000 70%,transparent 100%);mask-image:radial-gradient(closest-side,#000 70%,transparent 100%)}
+.hero2-more{background:#fdf1d2;position:relative;padding:0 0 40px;overflow:hidden}
+.parch-strip{display:flex;justify-content:center;gap:clamp(6px,2.5vw,36px);padding:34px 16px 28px;background:url('/assets/hero/parchment.png') center/100% 100% no-repeat;margin-top:-18px;position:relative;z-index:4}
+.parch-strip a{display:flex;flex-direction:column;align-items:center;text-decoration:none;color:#3a2410;text-align:center;flex:1;max-width:150px;min-width:0}
+.parch-strip img{width:100%;max-width:92px;filter:drop-shadow(0 4px 4px rgba(60,30,0,.25))}
 .parch-strip b{font-family:var(--font-sans);font-weight:800;font-size:clamp(.68rem,2.6vw,.95rem);line-height:1.15;margin-top:2px}
-.more-intro{text-align:center;max-width:720px;margin:0 auto;padding:26px 20px 10px}
+.more-intro{position:relative;text-align:center;max-width:720px;margin:0 auto;padding:30px 20px 10px}
+.more-intro>*:not(.leaf){position:relative;z-index:1}
+.leaf{position:absolute;bottom:0;width:min(15vw,170px);opacity:.95;pointer-events:none;z-index:0}
+.leaf-l{left:calc(50% - 50vw);}.leaf-r{right:calc(50% - 50vw);transform:scaleX(-1)}
 .more-intro h2{font-family:var(--font-serif);font-weight:700;text-transform:uppercase;font-size:clamp(1.9rem,8vw,3rem);line-height:1.05;color:#0d2a05;margin:0 0 12px}
 .more-intro p{font-size:1.02rem;line-height:1.5;color:#2a3a22;margin:0 auto 18px}
 .more-intro .ca-box{margin:0 auto 14px}
 .more-intro .hero-btns{justify-content:center}
 .hero-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:1000px;margin:18px auto 0;padding:0 14px}
-.hcard{position:relative;display:flex;align-items:flex-end;min-height:300px;border-radius:22px;overflow:hidden;text-decoration:none;color:#fff;
- background:linear-gradient(180deg,transparent 40%,#10260c 72%),var(--img) top/100% auto no-repeat,#10260c;box-shadow:0 10px 24px rgba(13,42,5,.25);transition:transform .2s}
+.hcard{position:relative;display:flex;align-items:flex-end;min-height:340px;border-radius:22px;overflow:hidden;text-decoration:none;color:#fff;
+ background:linear-gradient(180deg,transparent 45%,rgba(14,32,10,.95) 78%),var(--img) center top/cover no-repeat,#10260c;box-shadow:0 10px 24px rgba(13,42,5,.25);transition:transform .2s}
 .hcard:hover{transform:translateY(-4px)}
 .hcard div{padding:14px 14px 40px}
 .hcard h3{font-family:var(--font-serif);font-weight:700;font-size:1.05rem;text-transform:uppercase;margin:0 0 6px}
@@ -548,7 +563,14 @@ footer { background: #081a03; }
 .hcard i{position:absolute;right:14px;bottom:10px;font-style:normal;font-size:1.3rem}
 @media (max-width:800px){
  .hero-cards{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:12px;padding:0 14px 10px;-webkit-overflow-scrolling:touch}
- .hcard{flex:0 0 74%;scroll-snap-align:center;min-height:340px}
+ .hcard{flex:0 0 74%;scroll-snap-align:center;min-height:360px}
  .hero2-ctas{flex-wrap:nowrap;gap:8px}.pill{padding:12px 10px;font-size:.82rem;white-space:nowrap;flex:1;justify-content:center;gap:5px}
 }
-@media (min-width:801px){#hero.hero2{background:linear-gradient(#189bfc,#4aa8f0 60%,#3f8f2a)}.hero2-art{width:min(100%,780px);margin:0 auto;-webkit-mask-image:linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent);mask-image:linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent)}.hcard{min-height:340px}}
+@media (min-width:801px){
+ .stage{height:clamp(640px,62vw,900px)}
+ .st-logo{top:100px;width:min(35vw,500px);left:50%}
+ .st-wago{left:6%;bottom:9%;width:min(44vw,640px)}
+ .st-slogan{right:4%;top:auto;bottom:30%;font-size:clamp(1.8rem,3.2vw,3rem)}
+ .st-grass{width:100%}
+ .leaf{width:200px}
+}
