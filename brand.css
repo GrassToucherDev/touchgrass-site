@@ -606,3 +606,6 @@ img.st-slogan{position:absolute;right:2%;top:calc(80px + 0.86 * min(80vw,520px))
 #community{background:linear-gradient(180deg,#fde6dc 0%,rgba(253,230,220,.92) 30%,rgba(253,230,220,0) 64%),url('/assets/hero/bg-camp.jpg') 50% bottom/cover no-repeat,#8b6ac8;padding-bottom:clamp(60px,10vw,110px)}
 #community::after{display:none}
 .pre-footer{background:linear-gradient(180deg,rgba(10,20,40,.35),rgba(10,20,40,0) 60%),url('/assets/hero/bg-forest.jpg') 50% bottom/cover no-repeat,#16254a}
+
+/* nav scrolls with the page */
+nav{position:absolute!important}
