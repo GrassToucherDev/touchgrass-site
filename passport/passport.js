@@ -14,6 +14,13 @@ const store = {
 };
 
 // ── tiny DOM helper ─────────────────────────────────────────────────────────────────────────────────
+function sunIcon() {
+  const NS = "http://www.w3.org/2000/svg", svg = document.createElementNS(NS, "svg");
+  svg.setAttribute("viewBox", "-16 -16 32 32"); svg.setAttribute("fill", "none"); svg.setAttribute("stroke", "currentColor"); svg.setAttribute("stroke-width", "3"); svg.setAttribute("stroke-linecap", "round");
+  const c = document.createElementNS(NS, "circle"); c.setAttribute("r", "6"); svg.appendChild(c);
+  for (let i = 0; i < 7; i++) { const a = (i / 7) * Math.PI * 2, l = document.createElementNS(NS, "line"); l.setAttribute("x1", (Math.cos(a) * 9.5).toFixed(2)); l.setAttribute("y1", (Math.sin(a) * 9.5).toFixed(2)); l.setAttribute("x2", (Math.cos(a) * 14).toFixed(2)); l.setAttribute("y2", (Math.sin(a) * 14).toFixed(2)); svg.appendChild(l); }
+  return svg;
+}
 function h(tag, attrs, ...kids) {
   const el = document.createElement(tag);
   for (const [k, v] of Object.entries(attrs || {})) {
@@ -242,7 +249,9 @@ function render() {
     : h("h2", { class: "pp-name", "data-testid": "display-name" }, displayName());
   v.append(
     h("section", { class: "pp-card", "data-testid": "passport-card" },
-      h("div", { class: "pp-art" }, h("img", { src: artUrl(cover.id), alt: cover.name, "data-testid": "cover-art" }), h("div", { class: "pp-plate" }, cover.name)),
+      h("div", { class: "pp-art-wrap" },
+        h("div", { class: "pp-art" }, h("img", { src: artUrl(cover.id), alt: cover.name, "data-testid": "cover-art" }), h("div", { class: "pp-plate" }, cover.name)),
+        h("div", { class: "pp-seal", "aria-hidden": "true" }, sunIcon(), h("span", null, "VERIFIED"), h("span", null, (edition.split(" ")[0] || "WAGO").toUpperCase()))),
       h("div", { class: "pp-info" },
         h("div", { class: "pp-eyebrow" }, h("i"), edition, h("i")),
         nameEl,

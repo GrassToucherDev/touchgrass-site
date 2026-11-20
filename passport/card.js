@@ -29,6 +29,25 @@ function hills(ctx) {
   ctx.beginPath(); ctx.moveTo(0, 820); ctx.quadraticCurveTo(300, 740, 640, 800); ctx.quadraticCurveTo(1000, 860, 1300, 770); ctx.quadraticCurveTo(1480, 730, 1600, 780); ctx.lineTo(1600, 900); ctx.lineTo(0, 900); ctx.closePath(); ctx.fill();
 }
 
+// WAGO is a sun with exactly 7 rays.
+function sun(ctx, cx, cy, r, ray, w, rot) {
+  ctx.save(); ctx.translate(cx, cy); ctx.rotate(rot || 0); ctx.lineCap = "round"; ctx.lineWidth = w;
+  for (let i = 0; i < 7; i++) { const a = (i / 7) * Math.PI * 2; ctx.beginPath(); ctx.moveTo(Math.cos(a) * (r + w), Math.sin(a) * (r + w)); ctx.lineTo(Math.cos(a) * (r + w + ray), Math.sin(a) * (r + w + ray)); ctx.stroke(); }
+  ctx.beginPath(); ctx.arc(0, 0, r, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
+}
+function seal(ctx, cx, cy, top, bottom) {
+  ctx.save(); ctx.translate(cx, cy); ctx.rotate(-0.12);
+  ctx.shadowColor = "rgba(16,48,31,0.35)"; ctx.shadowBlur = 16; ctx.shadowOffsetY = 6;
+  ctx.fillStyle = PP.orange; ctx.beginPath(); ctx.arc(0, 0, 74, 0, Math.PI * 2); ctx.fill(); ctx.shadowColor = "transparent";
+  ctx.lineWidth = 4; ctx.strokeStyle = "#fbf1cf"; ctx.beginPath(); ctx.arc(0, 0, 64, 0, Math.PI * 2); ctx.stroke();
+  ctx.setLineDash([2, 9]); ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(0, 0, 54, 0, Math.PI * 2); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle = "#fbf1cf"; ctx.strokeStyle = "#fbf1cf"; ctx.textAlign = "center";
+  sun(ctx, 0, -8, 11, 10, 4);
+  ctx.font = `800 17px ${SANS}`; if ("letterSpacing" in ctx) ctx.letterSpacing = "2px";
+  ctx.fillText(top, 0, 30); ctx.font = `800 15px ${SANS}`; ctx.fillText(bottom, 0, 48);
+  if ("letterSpacing" in ctx) ctx.letterSpacing = "0px"; ctx.restore();
+}
+
 function tile(ctx, x, y, w, h, value, label) {
   ctx.fillStyle = "rgba(255,255,255,0.55)"; rr(ctx, x, y, w, h, 22); ctx.fill();
   ctx.lineWidth = 2; ctx.strokeStyle = "rgba(18,64,42,0.28)"; rr(ctx, x, y, w, h, 22); ctx.stroke();
@@ -52,10 +71,12 @@ export async function renderPassport({ piece, displayName, edition, stats }) {
   glow.addColorStop(0, "rgba(246,169,59,0.40)"); glow.addColorStop(1, "rgba(246,169,59,0)");
   ctx.fillStyle = glow; ctx.fillRect(0, 0, W, H);
   hills(ctx);
+  ctx.strokeStyle = "rgba(236,123,31,0.10)"; sun(ctx, 1220, 470, 250, 110, 26, 0.2);  // watermark behind the right column
 
   // outer frame
   ctx.lineWidth = 6; ctx.strokeStyle = PP.gold; rr(ctx, 28, 28, W - 56, H - 56, 34); ctx.stroke();
   ctx.lineWidth = 2; ctx.strokeStyle = "rgba(201,150,47,0.55)"; rr(ctx, 44, 44, W - 88, H - 88, 26); ctx.stroke();
+  ctx.setLineDash([1, 10]); ctx.lineCap = "round"; ctx.lineWidth = 3; ctx.strokeStyle = "rgba(201,150,47,0.7)"; rr(ctx, 56, 56, W - 112, H - 112, 20); ctx.stroke(); ctx.setLineDash([]); ctx.lineCap = "butt";
 
   // artwork
   const ax = 96, ay = 96, as = 708;
@@ -66,6 +87,8 @@ export async function renderPassport({ piece, displayName, edition, stats }) {
   ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = "high";
   ctx.drawImage(art, ax + (as - dw) / 2, ay + (as - dh) / 2, dw, dh); ctx.restore();
   ctx.lineWidth = 5; ctx.strokeStyle = PP.gold; rr(ctx, ax - 14, ay - 14, as + 28, as + 28, 34); ctx.stroke();
+
+  seal(ctx, ax + as + 6, ay + 8, "VERIFIED", String(edition || "WAGO").split(" ")[0].toUpperCase());
 
   // plate over the bottom of the art
   const plate = String(piece.name || "").toUpperCase();
