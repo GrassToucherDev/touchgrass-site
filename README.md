@@ -145,7 +145,14 @@ Set these in the Vercel project's environment variables (server-side only, never
 | `WAGO_ORIGINS_COLLECTION` | Verified **collection** address for WAGO Origins (the LaunchMyNFT collection), not a candy machine or mint authority. |
 | `SCREEN_TOUCHERS_COLLECTION` | Verified collection address for Screen Touchers. |
 | `PASSPORT_IPFS_GATEWAY` | Optional. Default `https://ipfs.io/ipfs/`. |
+| `PASSPORT_POG_URL` | Optional. `https://` URL of the Proof of Grass endpoint `/api/passport/summary` (e.g. `https://proofofgrass.app/api/passport/summary`). Turns on the "Add my Proof of Grass stats" button. |
+| `PASSPORT_PARTNER_SECRET` | Optional, 16+ characters. Must be the **same value** as `PASSPORT_PARTNER_SECRET` on the Proof of Grass Vercel project. Sent only server to server. |
 
 Until the first three are set, the page says "Passport is almost ready". Ownership and collection membership are
 checked on the server; the download contains only the art, name and counts (never a wallet address).
+
+**Proof of Grass stats (opt-in).** If both optional variables are set, a collector can tap "Add my Proof of Grass stats", sign a free
+message (no transaction) with their wallet, and this site asks Proof of Grass for the account that has verified that same wallet.
+The signature is checked here first (10 minute window), and nothing is shown unless the wallet is already verified on a Proof of
+Grass profile. Stats shown: Outdoor Proofs, Day Streak, Grove, and the username as the default display name.
 Tests: `node --test tests/passport.test.js`.

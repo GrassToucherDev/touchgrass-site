@@ -64,3 +64,56 @@ test("image fetch blocks private targets, non-https, non-images and unsafe redir
   const redir = async () => ({ ok: false, status: 302, headers: new Headers({ location: "https://127.0.0.1/x" }) });
   await assert.rejects(P.fetchImageSafe("https://93.184.216.34/a", { fetchImpl: redir }), /blocked/);
 });
+
+// ── Proof of Grass opt-in ───────────────────────────────────────────────────────────────────────────
+const crypto = require("node:crypto");
+const A58 = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
+function newWallet() {
+  const { publicKey, privateKey } = crypto.generateKeyPairSync("ed25519");
+  let n = BigInt("0x" + publicKey.export({ format: "der", type: "spki" }).slice(-32).toString("hex")), s = "";
+  while (n > 0n) { s = A58[Number(n % 58n)] + s; n /= 58n; }
+  return { address: s, sign: (m) => crypto.sign(null, Buffer.from(m), privateKey).toString("base64") };
+}
+const call = async (handler, req) => {
+  const res = { h: {}, setHeader(k, v) { this.h[k] = v; }, status(c) { this.code = c; return this; }, json(o) { this.body = o; return this; } };
+  await handler({ headers: {}, socket: { remoteAddress: "9.9.9.9" }, query: {}, ...req }, res); return res;
+};
+
+test("signature check accepts the wallet's own signature only", () => {
+  const w = newWallet(), o = newWallet();
+  const m = P.buildPogMessage({ wallet: w.address, issuedAt: "2026-11-20T10:00:00.000Z" });
+  assert.equal(P.verifyWalletSignature({ wallet: w.address, message: m, signatureB64: w.sign(m) }), true);
+  assert.equal(P.verifyWalletSignature({ wallet: o.address, message: m, signatureB64: w.sign(m) }), false);
+  assert.equal(P.verifyWalletSignature({ wallet: w.address, message: m + "x", signatureB64: w.sign(m) }), false);
+  assert.match(m, /touchgrass\.today/); assert.ok(m.includes(w.address));
+});
+
+test("pog route: not configured, signed flow, expired, forged, not linked, secret sent", async () => {
+  const pog = require("../api/passport/pog");
+  const saved = { ...process.env }, realFetch = global.fetch;
+  try {
+    delete process.env.PASSPORT_POG_URL; delete process.env.PASSPORT_PARTNER_SECRET;
+    assert.equal((await call(pog, { method: "GET", query: { wallet: W } })).code, 503);
+    process.env.PASSPORT_POG_URL = "https://pog.example/api/passport/summary"; process.env.PASSPORT_PARTNER_SECRET = "a-long-shared-secret-1234";
+    const w = newWallet();
+    const ch = await call(pog, { method: "GET", query: { wallet: w.address } });
+    assert.equal(ch.code, 200); assert.ok(ch.body.message.includes(w.address));
+    const sig = w.sign(ch.body.message);
+    let sent;
+    global.fetch = async (u, o) => { sent = { u, o }; return { ok: true, json: async () => ({ linked: true, username: "trailtess", streak: 12, best: 30, proofs: 41, grove: "Trail Crew", secretish: "no" }) }; };
+    const good = await call(pog, { method: "POST", body: { wallet: w.address, signature: sig, issuedAt: ch.body.issuedAt } });
+    assert.deepEqual(good.body, { linked: true, username: "trailtess", streak: 12, best: 30, proofs: 41, grove: "Trail Crew" });
+    assert.equal(sent.o.headers["x-passport-secret"], "a-long-shared-secret-1234");
+    assert.equal(JSON.parse(sent.o.body).wallet, w.address);
+    sent = null;
+    const forged = await call(pog, { method: "POST", body: { wallet: w.address, signature: newWallet().sign(ch.body.message), issuedAt: ch.body.issuedAt } });
+    assert.equal(forged.code, 400); assert.equal(sent, null, "must not call Proof of Grass without a valid signature");
+    const old = new Date(Date.now() - 20 * 60000).toISOString();
+    const expired = await call(pog, { method: "POST", body: { wallet: w.address, signature: w.sign(P.buildPogMessage({ wallet: w.address, issuedAt: old })), issuedAt: old } });
+    assert.equal(expired.code, 400); assert.equal(sent, null);
+    global.fetch = async () => ({ ok: true, json: async () => ({ linked: false }) });
+    assert.deepEqual((await call(pog, { method: "POST", body: { wallet: w.address, signature: sig, issuedAt: ch.body.issuedAt } })).body, { linked: false });
+    global.fetch = async () => ({ ok: false, status: 500 });
+    assert.equal((await call(pog, { method: "POST", body: { wallet: w.address, signature: sig, issuedAt: ch.body.issuedAt } })).code, 502);
+  } finally { global.fetch = realFetch; for (const k of ["PASSPORT_POG_URL", "PASSPORT_PARTNER_SECRET"]) { if (saved[k] === undefined) delete process.env[k]; else process.env[k] = saved[k]; } }
+});
