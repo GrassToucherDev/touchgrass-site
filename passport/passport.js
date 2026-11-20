@@ -253,6 +253,7 @@ function render() {
         h("div", { class: "pp-art" }, h("img", { src: artUrl(cover.id), alt: cover.name, "data-testid": "cover-art" }), h("div", { class: "pp-plate" }, cover.name)),
         h("div", { class: "pp-seal", "aria-hidden": "true" }, sunIcon(), h("span", null, "VERIFIED"), h("span", null, (edition.split(" ")[0] || "WAGO").toUpperCase()))),
       h("div", { class: "pp-info" },
+        h("img", { class: "pp-mascot", src: "/assets/brand/wago-cheer.png", alt: "", "aria-hidden": "true" }),
         h("div", { class: "pp-eyebrow" }, h("i"), edition, h("i")),
         nameEl,
         h("div", { class: "pp-stats" }, stats().map((s) => h("div", { class: "pp-stat" }, h("b", null, s.value), h("span", null, s.label)))),
