@@ -116,3 +116,8 @@ body:after{content:"";position:fixed;left:0;right:0;bottom:0;height:90px;pointer
 }
 
 .pp-h1,.pp-name{stroke-linejoin:round;-webkit-text-stroke-linejoin:round}
+
+.pp-stat{display:flex;align-items:center;gap:10px;text-align:left;padding:10px 12px}
+.pp-stat-ic{flex:none;width:clamp(44px,6vw,60px);height:clamp(44px,6vw,60px);object-fit:contain}
+.pp-sunbadge{display:flex;align-items:center;justify-content:center;border-radius:50%;background:var(--by);border:3px solid var(--ink);color:var(--bo)}.pp-sunbadge svg{width:70%;height:70%}
+.pp-stat-tx{flex:1;min-width:0;text-align:center}.pp-stat-tx b,.pp-stat-tx span{display:block}

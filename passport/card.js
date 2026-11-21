@@ -54,26 +54,34 @@ function grass(ctx) {
   ctx.lineTo(W, H); ctx.closePath(); ctx.fill(); ctx.stroke();
 }
 
-function tile(ctx, x, y, w, h, value, label, fill) {
+function tile(ctx, x, y, w, h, st, fill, icons) {
   sticker(ctx, x, y, w, h, 26, fill, 6, 8);
+  const ic = 92, ix = x + 18, iy = y + (h - ic) / 2, tcx = ix + ic + (x + w - 16 - (ix + ic)) / 2;
+  const im = icons[st.icon];
+  if (im) ctx.drawImage(im, ix, iy, ic, ic);
+  else { ctx.fillStyle = PP.ink; ctx.beginPath(); ctx.arc(ix + ic / 2, iy + ic / 2 + 4, ic / 2, 0, Math.PI * 2); ctx.fill(); ctx.fillStyle = PP.yellow; ctx.beginPath(); ctx.arc(ix + ic / 2, iy + ic / 2, ic / 2, 0, Math.PI * 2); ctx.fill(); ctx.lineWidth = 6; ctx.strokeStyle = PP.ink; ctx.stroke(); miniSun(ctx, ix + ic / 2, iy + ic / 2, 11, PP.orange); }
   ctx.textAlign = "center"; ctx.fillStyle = PP.ink;
-  ctx.font = `700 70px ${DISPLAY}`; ctx.fillText(String(value), x + w / 2, y + 80);
-  ctx.font = `800 25px ${SANS}`; ctx.fillText(label, x + w / 2, y + 119);
+  ctx.font = `700 66px ${DISPLAY}`; ctx.fillText(String(st.value), tcx, y + 78);
+  const lp = fit(ctx, st.label, x + w - 14 - (ix + ic + 8), 25, 16, 800, SANS); ctx.fillText(st.label, tcx, y + 117);
 }
 
 // piece: { name, artUrl }  stats: [{ value, label }] (max 4)
-export async function renderPassport({ piece, displayName, edition, stats }) {
+export async function renderPassport({ piece, displayName, edition, stats, grove }) {
   const W = PASSPORT_W, H = PASSPORT_H;
   const c = document.createElement("canvas"); c.width = W; c.height = H;
   const ctx = c.getContext("2d");
   try { await Promise.all([document.fonts.load("700 80px Fredoka"), document.fonts.load("600 30px Fredoka"), document.fonts.load("800 24px Nunito")]); } catch {}
   const art = await loadImage(piece.artUrl);
+  const icons = {};
+  await Promise.all(["stamp-screen-toucher", "stamp-proofs", "stamp-streak", "stamp-grove"].map(async (n) => { try { icons[n] = await loadImage(`/passport/assets/${n}.png`, false); } catch {} }));
+  let sunImg = null; try { sunImg = await loadImage("/passport/assets/sun.png", false); } catch {}
   let mascot = null; try { mascot = await loadImage("/assets/brand/wago-cheer.png", false); } catch {}
 
   // sunrise orange + 7-ray burst
   const bg = ctx.createLinearGradient(0, 0, 0, H); bg.addColorStop(0, PP.orange2); bg.addColorStop(1, PP.orange);
   ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
   sunburst(ctx, 1180, 250, 1400, 0.1);
+  if (sunImg) { ctx.globalAlpha = 0.28; ctx.drawImage(sunImg, 1010, 300, 640, 640); ctx.globalAlpha = 1; }
   grass(ctx);
 
   // artwork in a sticker frame
@@ -116,8 +124,13 @@ export async function renderPassport({ piece, displayName, edition, stats }) {
 
   const list = (stats || []).slice(0, 4), fills = [PP.paper, PP.yellow, PP.lime, PP.paper];
   const tw = 314, th = 142, gap = 32, top = 418;
-  list.forEach((st, i) => tile(ctx, rx + (i % 2) * (tw + gap), top + Math.floor(i / 2) * (th + 30), tw, th, st.value, st.label, fills[i]));
+  list.forEach((st, i) => tile(ctx, rx + (i % 2) * (tw + gap), top + Math.floor(i / 2) * (th + 30), tw, th, st, fills[i], icons));
 
+  if (grove && icons["stamp-grove"]) {
+    const g = String(grove).slice(0, 28); ctx.textAlign = "left"; const gp = fit(ctx, g, 280, 30, 20, 700, DISPLAY), gw = ctx.measureText(g).width + 96;
+    sticker(ctx, rx, 756, gw, 60, 30, PP.paper, 5, 6); ctx.drawImage(icons["stamp-grove"], rx + 6, 758, 52, 52);
+    ctx.fillStyle = PP.ink; ctx.font = `700 ${gp}px ${DISPLAY}`; ctx.fillText(g, rx + 68, 756 + 30 + gp * 0.34);
+  }
   ctx.textAlign = "right"; ctx.font = `700 28px ${DISPLAY}`; outlined(ctx, "touchgrass.today/passport", rx + rw, 846, 9);
   return c;
 }
