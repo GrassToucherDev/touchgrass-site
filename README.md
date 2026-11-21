@@ -144,6 +144,7 @@ Set these in the Vercel project's environment variables (server-side only, never
 | `PASSPORT_DAS_RPC_URL` | A **DAS-capable** Solana RPC (Helius, Triton, QuickNode...). Needs `getAssetsByOwner` and `getAsset`. Contains an API key, so keep it private. |
 | `WAGO_ORIGINS_COLLECTION` | Verified **collection** address for WAGO Origins (the LaunchMyNFT collection), not a candy machine or mint authority. |
 | `SCREEN_TOUCHERS_COLLECTION` | Verified collection address for Screen Touchers. |
+| `GRASS_TOUCHERS_COLLECTION` | Verified collection address for Grass Touchers. Optional: any one of the three collection addresses is enough for the Passport to work. |
 | `PASSPORT_IPFS_GATEWAY` | Optional. Default `https://ipfs.io/ipfs/`. |
 | `PASSPORT_POG_URL` | Optional. `https://` URL of the Proof of Grass endpoint `/api/passport/summary` (e.g. `https://proofofgrass.app/api/passport/summary`). Turns on the "Add my Proof of Grass stats" button. |
 | `PASSPORT_PARTNER_SECRET` | Optional, 16+ characters. Must be the **same value** as `PASSPORT_PARTNER_SECRET` on the Proof of Grass Vercel project. Sent only server to server. |

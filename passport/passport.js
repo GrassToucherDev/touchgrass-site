@@ -14,6 +14,20 @@ const store = {
 };
 
 // ── tiny DOM helper ─────────────────────────────────────────────────────────────────────────────────
+function grassBadge() {
+  const NS = "http://www.w3.org/2000/svg", d = h("span", { class: "pp-stat-ic pp-grassbadge", "aria-hidden": "true" }), svg = document.createElementNS(NS, "svg");
+  svg.setAttribute("viewBox", "-16 -16 32 32"); svg.setAttribute("fill", "none"); svg.setAttribute("stroke", "currentColor"); svg.setAttribute("stroke-width", "2.8"); svg.setAttribute("stroke-linecap", "round");
+  ["M0 10 Q-6 2 -9 -9", "M0 10 Q0 0 0 -13", "M0 10 Q6 2 9 -9"].forEach((dd) => { const pa = document.createElementNS(NS, "path"); pa.setAttribute("d", dd); svg.appendChild(pa); });
+  d.appendChild(svg); return d;
+}
+function sunBadge() { const d = h("span", { class: "pp-stat-ic pp-sunbadge", "aria-hidden": "true" }); d.appendChild(sunIcon()); return d; }
+function sunIcon() {
+  const NS = "http://www.w3.org/2000/svg", svg = document.createElementNS(NS, "svg");
+  svg.setAttribute("viewBox", "-16 -16 32 32"); svg.setAttribute("fill", "none"); svg.setAttribute("stroke", "currentColor"); svg.setAttribute("stroke-width", "3"); svg.setAttribute("stroke-linecap", "round");
+  const c = document.createElementNS(NS, "circle"); c.setAttribute("r", "6"); svg.appendChild(c);
+  for (let i = 0; i < 7; i++) { const a = (i / 7) * Math.PI * 2, l = document.createElementNS(NS, "line"); l.setAttribute("x1", (Math.cos(a) * 9.5).toFixed(2)); l.setAttribute("y1", (Math.sin(a) * 9.5).toFixed(2)); l.setAttribute("x2", (Math.cos(a) * 14).toFixed(2)); l.setAttribute("y2", (Math.sin(a) * 14).toFixed(2)); svg.appendChild(l); }
+  return svg;
+}
 function h(tag, attrs, ...kids) {
   const el = document.createElement(tag);
   for (const [k, v] of Object.entries(attrs || {})) {
@@ -36,7 +50,7 @@ function cleanDisplayName(v) {
 }
 const tokenNumber = (n) => { const m = /#\s*(\d+)/.exec(String(n ?? "")); return m ? Number(m[1]) : null; };
 function sortPieces(list) {
-  const rank = (p) => (p.collection === "origins" ? 0 : 1);
+  const rank = (p) => (p.collection === "origins" ? 0 : p.collection === "screen_touchers" ? 1 : 2);
   return [...list].sort((a, b) => {
     if (rank(a) !== rank(b)) return rank(a) - rank(b);
     const na = tokenNumber(a.name), nb = tokenNumber(b.name);
@@ -60,13 +74,13 @@ const WALLETS = [
 const detected = () => WALLETS.filter((w) => w.get());
 const hooked = new Set();
 
-const S = { pog: null, pogEnabled: false, pogBusy: false, pogNote: "", wallet: null, walletId: null, status: "idle", origins: [], screenTouchers: [], coverId: null, name: "", editing: false, busy: false, note: "", refreshing: false, refreshError: false, checkedOnce: false };
+const S = { pog: null, pogEnabled: false, pogBusy: false, pogNote: "", wallet: null, walletId: null, status: "idle", origins: [], screenTouchers: [], grassTouchers: [], coverId: null, name: "", editing: false, busy: false, note: "", refreshing: false, refreshError: false, checkedOnce: false };
 let reqId = 0;
 
 function setWallet(addr, walletId) {
   if (addr === S.wallet) { S.walletId = walletId || S.walletId; return; }
   reqId++;                                       // older answers are now ignored
-  Object.assign(S, { pog: null, pogEnabled: false, pogBusy: false, pogNote: "", wallet: addr, walletId: walletId || S.walletId, status: addr ? "loading" : "idle", origins: [], screenTouchers: [], coverId: null, name: "", editing: false, note: "", refreshing: false, refreshError: false, checkedOnce: false });
+  Object.assign(S, { pog: null, pogEnabled: false, pogBusy: false, pogNote: "", wallet: addr, walletId: walletId || S.walletId, status: addr ? "loading" : "idle", origins: [], screenTouchers: [], grassTouchers: [], coverId: null, name: "", editing: false, note: "", refreshing: false, refreshError: false, checkedOnce: false });
   if (addr) {
     S.coverId = store.get(`passport_cover:${addr}`);
     S.name = cleanDisplayName(store.get(`passport_name:${addr}`));
@@ -134,7 +148,7 @@ async function load(wallet, { quiet = false } = {}) {
     const r = await fetch(`/api/passport/collection?wallet=${encodeURIComponent(wallet)}`, { cache: "no-store" });
     const j = await r.json().catch(() => ({}));
     if (id !== reqId) return;
-    if (r.ok && j.status === "ok") { S.status = "ok"; S.origins = j.origins || []; S.screenTouchers = j.screenTouchers || []; S.pogEnabled = !!j.pogEnabled; }
+    if (r.ok && j.status === "ok") { S.status = "ok"; S.origins = j.origins || []; S.screenTouchers = j.screenTouchers || []; S.grassTouchers = j.grassTouchers || []; S.pogEnabled = !!j.pogEnabled; }
     else if (j.status === "not_configured") S.status = "not_configured";
     else fail();
   } catch { if (id !== reqId) return; fail(); }
@@ -142,12 +156,19 @@ async function load(wallet, { quiet = false } = {}) {
   render();
 }
 
-const pieces = () => (S.status === "ok" ? sortPieces([...S.origins, ...S.screenTouchers]) : []);
+const pieces = () => (S.status === "ok" ? sortPieces([...S.origins, ...S.screenTouchers, ...S.grassTouchers]) : []);
 const displayName = () => S.name || S.pog?.username || DEFAULT_NAME;
+const editionOf = (c) => (c.collection === "origins" ? "Origins Edition" : c.collection === "grass_touchers" ? "Grass Touchers" : "Screen Touchers");
 function stats() {
-  const o = S.origins.length, s = S.screenTouchers.length;
-  const t = [{ value: o, label: o === 1 ? "Origin" : "Origins" }, { value: s, label: s === 1 ? "Screen Toucher" : "Screen Touchers" }];
-  if (S.pog) t.push({ value: S.pog.proofs, label: "Outdoor Proofs" }, { value: S.pog.streak, label: "Day Streak" });
+  const t = [
+    { value: S.origins.length, label: "Origins", icon: "seal-origins" },
+    { value: S.screenTouchers.length, label: "Screen Touchers", icon: "stamp-screen-toucher" },
+    { value: S.grassTouchers.length, label: "Grass Touchers", icon: "stamp-grass" },
+  ];
+  if (S.pog) {
+    t.push({ value: S.pog.proofs, label: "Outdoor Proofs", icon: "stamp-proofs" }, { value: S.pog.streak, label: "Day Streak", icon: "stamp-streak" });
+    if (S.pog.grove) t.push({ value: String(S.pog.grove).slice(0, 28), label: "Grove", icon: "stamp-grove", text: true });
+  }
   return t;
 }
 
@@ -180,7 +201,7 @@ async function download() {
   if (!cover || S.busy) return;
   S.busy = true; S.note = ""; render();
   try {
-    const canvas = await renderPassport({ piece: { name: cover.name, artUrl: artUrl(cover.id) }, displayName: displayName(), edition: cover.collection === "origins" ? "Origins Edition" : "Screen Touchers", stats: stats() });
+    const canvas = await renderPassport({ piece: { name: cover.name, artUrl: artUrl(cover.id) }, displayName: displayName(), edition: editionOf(cover), stats: stats() });
     const blob = await canvasToBlob(canvas);
     const url = URL.createObjectURL(blob);
     const a = h("a", { href: url, download: "wago-passport.png" });
@@ -235,19 +256,22 @@ function render() {
   }
 
   // owned
-  const edition = cover.collection === "origins" ? "Origins Edition" : "Screen Touchers";
+  const edition = editionOf(cover);
   const nameEl = S.editing
     ? h("form", { class: "pp-edit", onsubmit: (e) => { e.preventDefault(); const n = cleanDisplayName(e.currentTarget.elements.n.value); S.name = n; store.set(`passport_name:${S.wallet}`, n); S.editing = false; render(); } },
         h("input", { name: "n", value: S.name, maxlength: NAME_MAX, placeholder: DEFAULT_NAME, "aria-label": "Display name", autofocus: true }), h("button", { class: "pp-btn pp-btn-sm", type: "submit" }, "Save"))
     : h("h2", { class: "pp-name", "data-testid": "display-name" }, displayName());
   v.append(
     h("section", { class: "pp-card", "data-testid": "passport-card" },
-      h("div", { class: "pp-art" }, h("img", { src: artUrl(cover.id), alt: cover.name, "data-testid": "cover-art" }), h("div", { class: "pp-plate" }, cover.name)),
+      h("div", { class: "pp-art-wrap" },
+        h("div", { class: "pp-art" }, h("img", { src: artUrl(cover.id), alt: cover.name, "data-testid": "cover-art" }), h("div", { class: "pp-plate" }, cover.name)),
+        h("div", { class: "pp-seal-img" + (cover.collection === "origins" ? " pp-seal-pill" : ""), "aria-hidden": "true" }, h("img", { src: cover.collection === "origins" ? "/passport/assets/stamp-origin.png" : cover.collection === "grass_touchers" ? "/passport/assets/seal-grass-touchers.png" : "/passport/assets/seal-screen-toucher.png", alt: "" }), h("span", null, "VERIFIED"))),
       h("div", { class: "pp-info" },
+        h("img", { class: "pp-mascot", src: "/assets/brand/wago-cheer.png", alt: "", "aria-hidden": "true" }),
         h("div", { class: "pp-eyebrow" }, h("i"), edition, h("i")),
         nameEl,
-        h("div", { class: "pp-stats" }, stats().map((s) => h("div", { class: "pp-stat" }, h("b", null, s.value), h("span", null, s.label)))),
-        S.pog && h("p", { class: "pp-fine pp-pogline", "data-testid": "pog-line" }, S.pog.grove ? `Grove: ${S.pog.grove} \u00b7 ` : "", `Best streak ${S.pog.best}`),
+        h("div", { class: "pp-stats" }, stats().map((s) => h("div", { class: "pp-stat" }, h("img", { class: "pp-stat-ic", src: `/passport/assets/${s.icon}.png`, alt: "", width: 56, height: 56 }), h("div", { class: "pp-stat-tx" }, h("b", { class: s.text ? "pp-stat-txt" : "" }, s.value), h("span", null, s.label))))),
+        S.pog && h("p", { class: "pp-fine pp-pogline", "data-testid": "pog-line" }, `Best streak ${S.pog.best}`),
         S.pogEnabled && !S.pog && h("div", { class: "pp-pogask" },
           h("button", { class: "pp-btn pp-btn-ghost pp-btn-sm", "data-testid": "add-pog", onclick: addPog, disabled: S.pogBusy }, S.pogBusy ? "Waiting for your wallet\u2026" : "Add my Proof of Grass stats"),
           h("p", { class: "pp-fine" }, "Optional. You\u2019ll sign a free message to prove this is your wallet. No transaction.")),
@@ -260,7 +284,7 @@ function render() {
       h("div", { class: "pp-thumbs" }, ps.map((p) => h("button", { class: "pp-thumb" + (p.id === cover.id ? " on" : ""), "aria-pressed": String(p.id === cover.id), "aria-label": `Use ${p.name} as cover`, onclick: () => { S.coverId = p.id; store.set(`passport_cover:${S.wallet}`, p.id); render(); } },
         h("img", { src: safeImg(p.image), alt: "", loading: "lazy", referrerpolicy: "no-referrer" }),
         p.id === cover.id && h("em", null, "Cover"),
-        h("span", null, p.name), h("small", null, p.collection === "origins" ? "WAGO Origins" : "Screen Toucher")))),
+        h("span", null, p.name), h("small", null, p.collection === "origins" ? "WAGO Origins" : p.collection === "grass_touchers" ? "Grass Toucher" : "Screen Toucher")))),
       h("p", { class: "pp-fine" }, "Verified on-chain for the connected wallet. Tap a piece to make it your cover.")));
 }
 
