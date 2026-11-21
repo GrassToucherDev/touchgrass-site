@@ -1,9 +1,10 @@
 // api/_lib/passport.js (server only; the leading underscore keeps Vercel from exposing it as a route).
-// Reads a wallet's WAGO Origins + Screen Touchers from a DAS-capable Solana RPC and verifies collection
+// Reads a wallet's WAGO Origins, Screen Touchers + Grass Touchers from a DAS-capable Solana RPC and verifies collection
 // membership. Configuration comes only from environment variables set on this Vercel project:
 //   PASSPORT_DAS_RPC_URL        DAS-capable RPC (Helius, Triton, QuickNode...). Contains an API key: server only.
 //   WAGO_ORIGINS_COLLECTION     verified collection address for WAGO Origins
 //   SCREEN_TOUCHERS_COLLECTION  verified collection address for Screen Touchers
+//   GRASS_TOUCHERS_COLLECTION   verified collection address for Grass Touchers
 //   PASSPORT_IPFS_GATEWAY       optional, default https://ipfs.io/ipfs/
 // The RPC URL never leaves the server and is scrubbed from error messages.
 const dns = require("node:dns/promises");
@@ -16,12 +17,14 @@ function passportConfig(env = process.env) {
   const rpc = (env.PASSPORT_DAS_RPC_URL || "").trim();
   const origins = (env.WAGO_ORIGINS_COLLECTION || "").trim();
   const screenTouchers = (env.SCREEN_TOUCHERS_COLLECTION || "").trim();
+  const grassTouchers = (env.GRASS_TOUCHERS_COLLECTION || "").trim();
   const missing = [];
   if (!rpc) missing.push("PASSPORT_DAS_RPC_URL");
   if (!origins) missing.push("WAGO_ORIGINS_COLLECTION");
   if (!screenTouchers) missing.push("SCREEN_TOUCHERS_COLLECTION");
-  const bad = [origins, screenTouchers].filter((a) => a && !SOLANA_ADDRESS_RE.test(a));
-  return { rpc, origins, screenTouchers, missing, ok: !!rpc && !!(origins || screenTouchers) && bad.length === 0 };
+  if (!grassTouchers) missing.push("GRASS_TOUCHERS_COLLECTION");
+  const bad = [origins, screenTouchers, grassTouchers].filter((a) => a && !SOLANA_ADDRESS_RE.test(a));
+  return { rpc, origins, screenTouchers, grassTouchers, missing, ok: !!rpc && !!(origins || screenTouchers || grassTouchers) && bad.length === 0 };
 }
 
 const scrub = (msg, rpc) => String(msg || "").split(rpc || "\u0000").join("[rpc]").replace(/api[-_]?key=[^&\s"']+/gi, "api-key=[hidden]");
@@ -74,7 +77,7 @@ function tokenNumber(name) {
 
 // Origins first, then by token number, then name/id. Stable, so the "first Origin" is predictable.
 function sortPieces(list) {
-  const rank = (p) => (p.collection === "origins" ? 0 : 1);
+  const rank = (p) => (p.collection === "origins" ? 0 : p.collection === "screen_touchers" ? 1 : 2);
   return [...list].sort((a, b) => {
     if (rank(a) !== rank(b)) return rank(a) - rank(b);
     const na = tokenNumber(a.name), nb = tokenNumber(b.name);
@@ -91,12 +94,12 @@ function classify(items, wallet, cfg, env) {
   for (const a of items || []) {
     if (!a || a.burnt || !a.ownership || a.ownership.owner !== wallet) continue;
     const col = collectionOf(a);
-    const kind = col && col === cfg.origins ? "origins" : col && col === cfg.screenTouchers ? "screen_touchers" : null;
+    const kind = col && col === cfg.origins ? "origins" : col && col === cfg.screenTouchers ? "screen_touchers" : col && col === cfg.grassTouchers ? "grass_touchers" : null;
     if (!kind) continue;
     const image = imageOf(a, env);
     if (!image) continue;
     const name = String((a.content && a.content.metadata && a.content.metadata.name) || "").slice(0, 80);
-    out.push({ id: a.id, collection: kind, name: name || (kind === "origins" ? "WAGO Origin" : "Screen Toucher"), image });
+    out.push({ id: a.id, collection: kind, name: name || (kind === "origins" ? "WAGO Origin" : kind === "grass_touchers" ? "Grass Toucher" : "Screen Toucher"), image });
   }
   return sortPieces(out);
 }
@@ -117,7 +120,7 @@ async function verifiedImageFor(mint, cfg, { fetchImpl = fetch, env = process.en
   if (!SOLANA_ADDRESS_RE.test(mint || "")) return null;
   const a = await das(cfg, "getAsset", { id: mint }, { fetchImpl });
   const col = collectionOf(a);
-  if (!a || a.burnt || !col || (col !== cfg.origins && col !== cfg.screenTouchers)) return null;
+  if (!a || a.burnt || !col || (col !== cfg.origins && col !== cfg.screenTouchers && col !== cfg.grassTouchers)) return null;
   return imageOf(a, env);
 }
 

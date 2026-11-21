@@ -126,3 +126,6 @@ body:after{content:"";position:fixed;left:0;right:0;bottom:0;height:90px;pointer
 .pp-seal-img img{display:block;width:100%;height:auto}
 .pp-seal-img span{position:absolute;left:0;right:0;bottom:15%;text-align:center;font:700 9px Fredoka,Nunito,sans-serif;letter-spacing:.14em;color:#fffaf0;-webkit-text-stroke:3px var(--ink);paint-order:stroke fill}
 @media(max-width:760px){.pp-seal-img{width:84px;top:-18px;left:-10px}.pp-seal-img span{font-size:8px}}
+
+.pp-grassbadge{display:flex;align-items:center;justify-content:center;border-radius:50%;background:var(--bg);border:3px solid var(--ink);color:#fffaf0}.pp-grassbadge svg{width:72%;height:72%}
+.pp-stat-tx b.pp-stat-txt{font-size:clamp(17px,2.4vw,24px);line-height:1.15;overflow-wrap:anywhere}

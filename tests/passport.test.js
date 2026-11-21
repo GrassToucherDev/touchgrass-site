@@ -4,15 +4,15 @@ const assert = require("node:assert/strict");
 const P = require("../api/_lib/passport");
 
 const W = "7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU", OTHER = "9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM";
-const ORI = "BjEWJWPEeZPkmQTKHz8oXtRtE82yqp1TrKzq7GmYgA2N", ST = "8kDqxcvuiGhTA1qDfa9v4rsuxFHQwuQhwWWaauNZy2BT", FOREIGN = "FoReignCo11ect1on11111111111111111111111111";
-const cfg = { rpc: "https://rpc.example/?api-key=SECRET123", origins: ORI, screenTouchers: ST, ok: true };
+const ORI = "BjEWJWPEeZPkmQTKHz8oXtRtE82yqp1TrKzq7GmYgA2N", ST = "8kDqxcvuiGhTA1qDfa9v4rsuxFHQwuQhwWWaauNZy2BT", FOREIGN = "FoReignCo11ect1on11111111111111111111111111", GT = "GrassTouchersTestCo11ect1on1111111111111";
+const cfg = { rpc: "https://rpc.example/?api-key=SECRET123", origins: ORI, screenTouchers: ST, grassTouchers: GT, ok: true };
 const asset = (id, col, owner = W, o = {}) => ({ id, ownership: { owner }, grouping: col ? [{ group_key: "collection", group_value: col }] : [], content: { metadata: { name: o.name || `WAGO Origins #${id.slice(-3)}` }, links: { image: o.image || `https://cdn.example/${id}.png` } }, ...(o.extra || {}) });
 const ok = (body) => ({ ok: true, status: 200, json: async () => body });
 
 test("config reports missing env vars and never guesses addresses", () => {
   const c = P.passportConfig({});
   assert.equal(c.ok, false);
-  assert.deepEqual(c.missing, ["PASSPORT_DAS_RPC_URL", "WAGO_ORIGINS_COLLECTION", "SCREEN_TOUCHERS_COLLECTION"]);
+  assert.deepEqual(c.missing, ["PASSPORT_DAS_RPC_URL", "WAGO_ORIGINS_COLLECTION", "SCREEN_TOUCHERS_COLLECTION", "GRASS_TOUCHERS_COLLECTION"]);
   assert.equal(c.origins, ""); assert.equal(c.screenTouchers, "");
   assert.equal(P.passportConfig({ PASSPORT_DAS_RPC_URL: "https://r", WAGO_ORIGINS_COLLECTION: ORI }).ok, true);
   assert.equal(P.passportConfig({ PASSPORT_DAS_RPC_URL: "https://r", WAGO_ORIGINS_COLLECTION: "not-an-address" }).ok, false);
@@ -116,4 +116,11 @@ test("pog route: not configured, signed flow, expired, forged, not linked, secre
     global.fetch = async () => ({ ok: false, status: 500 });
     assert.equal((await call(pog, { method: "POST", body: { wallet: w.address, signature: sig, issuedAt: ch.body.issuedAt } })).code, 502);
   } finally { global.fetch = realFetch; for (const k of ["PASSPORT_POG_URL", "PASSPORT_PARTNER_SECRET"]) { if (saved[k] === undefined) delete process.env[k]; else process.env[k] = saved[k]; } }
+});
+
+test("Grass Touchers are classified, sorted after Screen Touchers, and optional", () => {
+  const out = P.classify([asset("g1", GT, W, { name: "Grass Toucher #3" }), asset("s1", ST, W, { name: "Screen Toucher #5" }), asset("o1", ORI)], W, cfg);
+  assert.deepEqual(out.map((p) => [p.id, p.collection]), [["o1", "origins"], ["s1", "screen_touchers"], ["g1", "grass_touchers"]]);
+  assert.equal(P.passportConfig({ PASSPORT_DAS_RPC_URL: "https://r", GRASS_TOUCHERS_COLLECTION: GT }).ok, true);
+  assert.equal(P.passportConfig({ PASSPORT_DAS_RPC_URL: "https://r", GRASS_TOUCHERS_COLLECTION: "bad" }).ok, false);
 });

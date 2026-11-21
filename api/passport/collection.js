@@ -30,6 +30,7 @@ module.exports = async function handler(req, res) {
       status: "ok",
       origins: pieces.filter((p) => p.collection === "origins"),
       screenTouchers: pieces.filter((p) => p.collection === "screen_touchers"),
+      grassTouchers: pieces.filter((p) => p.collection === "grass_touchers"),
       pogEnabled: pogConfig().ok,
       checkedAt: new Date().toISOString(),
     });

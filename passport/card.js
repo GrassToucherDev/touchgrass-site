@@ -54,19 +54,26 @@ function grass(ctx) {
   ctx.lineTo(W, H); ctx.closePath(); ctx.fill(); ctx.stroke();
 }
 
+function grassIcon(ctx, cx, cy, r) {
+  ctx.fillStyle = PP.ink; ctx.beginPath(); ctx.arc(cx, cy + 4, r, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = PP.green; ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fill(); ctx.lineWidth = Math.max(4, r * 0.14); ctx.strokeStyle = PP.ink; ctx.stroke();
+  ctx.strokeStyle = PP.paper; ctx.lineWidth = r * 0.17; ctx.lineCap = "round"; const u = r / 16;
+  [[-9, -9, -6, 2], [0, -13, 0, 0], [9, -9, 6, 2]].forEach(([tx, ty, cx1, cy1]) => { ctx.beginPath(); ctx.moveTo(cx, cy + 10 * u); ctx.quadraticCurveTo(cx + cx1 * u, cy + cy1 * u, cx + tx * u, cy + ty * u); ctx.stroke(); });
+  ctx.lineCap = "butt";
+}
 function tile(ctx, x, y, w, h, st, fill, icons) {
   sticker(ctx, x, y, w, h, 26, fill, 6, 8);
-  const ic = 84, ix = x + 18, iy = y + (h - ic) / 2, tcx = ix + ic + (x + w - 16 - (ix + ic)) / 2;
+  const small = h < 130, ic = small ? 66 : 84, ix = x + 16, iy = y + (h - ic) / 2, tcx = ix + ic + (x + w - 14 - (ix + ic)) / 2, tw = x + w - 14 - (ix + ic + 6);
   const im = icons[st.icon];
-  if (im) ctx.drawImage(im, ix, iy, ic, ic);
-  else { ctx.fillStyle = PP.ink; ctx.beginPath(); ctx.arc(ix + ic / 2, iy + ic / 2 + 4, ic / 2, 0, Math.PI * 2); ctx.fill(); ctx.fillStyle = PP.yellow; ctx.beginPath(); ctx.arc(ix + ic / 2, iy + ic / 2, ic / 2, 0, Math.PI * 2); ctx.fill(); ctx.lineWidth = 6; ctx.strokeStyle = PP.ink; ctx.stroke(); miniSun(ctx, ix + ic / 2, iy + ic / 2, 11, PP.orange); }
+  if (im) ctx.drawImage(im, ix, iy, ic, ic); else grassIcon(ctx, ix + ic / 2, iy + ic / 2, ic / 2);
   ctx.textAlign = "center"; ctx.fillStyle = PP.ink;
-  ctx.font = `700 66px ${DISPLAY}`; ctx.fillText(String(st.value), tcx, y + 78);
-  const lp = fit(ctx, st.label, x + w - 14 - (ix + ic + 8), 25, 16, 800, SANS); ctx.fillText(st.label, tcx, y + 117);
+  if (st.text) { fit(ctx, st.value, tw, 40, 20, 700, DISPLAY); ctx.fillText(st.value, tcx, y + (small ? 52 : 70)); }
+  else { ctx.font = `700 ${small ? 52 : 66}px ${DISPLAY}`; ctx.fillText(String(st.value), tcx, y + (small ? 56 : 78)); }
+  fit(ctx, st.label, tw, small ? 22 : 25, 14, 800, SANS); ctx.fillText(st.label, tcx, y + (small ? 90 : 117));
 }
 
 // piece: { name, artUrl }  stats: [{ value, label }] (max 4)
-export async function renderPassport({ piece, displayName, edition, stats, grove }) {
+export async function renderPassport({ piece, displayName, edition, stats }) {
   const W = PASSPORT_W, H = PASSPORT_H;
   const c = document.createElement("canvas"); c.width = W; c.height = H;
   const ctx = c.getContext("2d");
@@ -130,15 +137,10 @@ export async function renderPassport({ piece, displayName, edition, stats, grove
   const nameMax = rw - 20;
   fit(ctx, displayName, nameMax, 120, 52, 700, DISPLAY); outlined(ctx, displayName, rx, 340, 16);
 
-  const list = (stats || []).slice(0, 4), fills = [PP.paper, PP.yellow, PP.lime, PP.paper];
-  const tw = 316, th = 142, gap = 28, top = 408;
-  list.forEach((st, i) => tile(ctx, rx + (i % 2) * (tw + gap), top + Math.floor(i / 2) * (th + 30), tw, th, st, fills[i], icons));
+  const list = (stats || []).slice(0, 6), rows = Math.ceil(list.length / 2), compact = rows > 2, fills = [PP.paper, PP.yellow, PP.lime, PP.paper, PP.yellow, PP.paper];
+  const tw = 316, th = compact ? 106 : 142, gap = 28, top = compact ? 388 : 408, rgap = compact ? 18 : 30;
+  list.forEach((st, i) => tile(ctx, rx + (i % 2) * (tw + gap), top + Math.floor(i / 2) * (th + rgap), tw, th, st, fills[i], icons));
 
-  if (grove && icons["stamp-grove"]) {
-    const g = String(grove).slice(0, 28); ctx.textAlign = "left"; const gp = fit(ctx, g, 280, 30, 20, 700, DISPLAY), gw = ctx.measureText(g).width + 96;
-    sticker(ctx, rx, 748, gw, 60, 30, PP.paper, 5, 6); ctx.drawImage(icons["stamp-grove"], rx + 6, 750, 52, 52);
-    ctx.fillStyle = PP.ink; ctx.font = `700 ${gp}px ${DISPLAY}`; ctx.fillText(g, rx + 68, 748 + 30 + gp * 0.34);
-  }
   ctx.textAlign = "center"; ctx.font = `700 26px ${DISPLAY}`; const url = "touchgrass.today/passport", uw = ctx.measureText(url).width + 56;
   sticker(ctx, ax + as / 2 - uw / 2, 770, uw, 46, 23, PP.paper, 5, 5); ctx.fillStyle = PP.ink; ctx.fillText(url, ax + as / 2, 802);
   if (frameImg) ctx.drawImage(frameImg, 0, 0, W, H);
