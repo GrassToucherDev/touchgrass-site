@@ -73,7 +73,7 @@ export async function renderPassport({ piece, displayName, edition, stats, grove
   try { await Promise.all([document.fonts.load("700 80px Fredoka"), document.fonts.load("600 30px Fredoka"), document.fonts.load("800 24px Nunito")]); } catch {}
   const art = await loadImage(piece.artUrl);
   const icons = {};
-  await Promise.all(["stamp-origin", "stamp-screen-toucher", "stamp-proofs", "stamp-streak", "stamp-grove"].map(async (n) => { try { icons[n] = await loadImage(`/passport/assets/${n}.png`, false); } catch {} }));
+  await Promise.all(["seal-screen-toucher", "stamp-origin", "stamp-screen-toucher", "stamp-proofs", "stamp-streak", "stamp-grove"].map(async (n) => { try { icons[n] = await loadImage(`/passport/assets/${n}.png`, false); } catch {} }));
   let sunImg = null; try { sunImg = await loadImage("/passport/assets/sun.png", false); } catch {}
   let bgImg = null, frameImg = null; try { [bgImg, frameImg] = await Promise.all([loadImage("/passport/assets/bg.jpg", false), loadImage("/passport/assets/frame.png", false)]); } catch {}
   let mascot = null; try { mascot = await loadImage("/assets/brand/wago-cheer.png", false); } catch {}
@@ -100,15 +100,23 @@ export async function renderPassport({ piece, displayName, edition, stats, grove
   sticker(ctx, plx, ply, pw, ph, 22, PP.yellow, 6, 7);
   ctx.fillStyle = PP.ink; ctx.font = `700 ${px}px ${DISPLAY}`; ctx.fillText(plate, ax + as / 2, ply + ph / 2 + px * 0.34);
 
-  // verified seal on the frame corner
+  // verified seal on the frame corner (brand art for Screen Touchers, drawn badge for Origins until its art exists)
+  const sealImg = !/origin/i.test(String(edition || "")) && icons["seal-screen-toucher"];
   ctx.save(); ctx.translate(ax + as - 8, ay + 6); ctx.rotate(0.15);
-  ctx.fillStyle = PP.ink; ctx.beginPath(); ctx.arc(0, 8, 70, 0, Math.PI * 2); ctx.fill();
-  ctx.fillStyle = PP.yellow; ctx.beginPath(); ctx.arc(0, 0, 70, 0, Math.PI * 2); ctx.fill();
-  ctx.lineWidth = 7; ctx.strokeStyle = PP.ink; ctx.stroke();
-  miniSun(ctx, 0, -14, 11, PP.orange);
-  ctx.fillStyle = PP.ink; ctx.textAlign = "center"; ctx.font = `700 19px ${DISPLAY}`; if ("letterSpacing" in ctx) ctx.letterSpacing = "1px";
-  ctx.fillText("VERIFIED", 0, 34); ctx.font = `700 14px ${DISPLAY}`; ctx.fillText(String(edition || "WAGO").split(" ")[0].toUpperCase(), 0, 52);
-  if ("letterSpacing" in ctx) ctx.letterSpacing = "0px"; ctx.restore();
+  if (sealImg) {
+    ctx.shadowColor = "rgba(20,17,13,0.35)"; ctx.shadowOffsetY = 6; ctx.drawImage(sealImg, -80, -80, 160, 160); ctx.shadowColor = "transparent";
+    ctx.textAlign = "center"; ctx.font = `700 16px ${DISPLAY}`; if ("letterSpacing" in ctx) ctx.letterSpacing = "2px"; ctx.fillStyle = PP.paper; ctx.lineWidth = 4; ctx.strokeStyle = PP.ink; ctx.lineJoin = "round";
+    ctx.strokeText("VERIFIED", 0, 58); ctx.fillText("VERIFIED", 0, 58); if ("letterSpacing" in ctx) ctx.letterSpacing = "0px";
+  } else {
+    ctx.fillStyle = PP.ink; ctx.beginPath(); ctx.arc(0, 8, 70, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = PP.yellow; ctx.beginPath(); ctx.arc(0, 0, 70, 0, Math.PI * 2); ctx.fill();
+    ctx.lineWidth = 7; ctx.strokeStyle = PP.ink; ctx.stroke();
+    miniSun(ctx, 0, -14, 11, PP.orange);
+    ctx.fillStyle = PP.ink; ctx.textAlign = "center"; ctx.font = `700 19px ${DISPLAY}`; if ("letterSpacing" in ctx) ctx.letterSpacing = "1px";
+    ctx.fillText("VERIFIED", 0, 34); ctx.font = `700 14px ${DISPLAY}`; ctx.fillText(String(edition || "WAGO").split(" ")[0].toUpperCase(), 0, 52);
+    if ("letterSpacing" in ctx) ctx.letterSpacing = "0px";
+  }
+  ctx.restore();
 
   // right column
   const rx = 840, rw = 660;
