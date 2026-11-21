@@ -214,7 +214,7 @@ async function drawCalm(ctx, { art, icons, mascot, piece, displayName, edition, 
   ctx.fillText(`MY COLLECTION · ${total} ${total === 1 ? "PIECE" : "PIECES"}`, ix, sy); spaced(ctx, 0);
   const imgs = await Promise.all(shown.map((p) => loadImage(p.artUrl).catch(() => null))), sz = 58, step = 70, top = sy + 16;
   imgs.forEach((im, i) => {
-    if (!im) return; ctx.save(); ctx.translate(ix + sz / 2 + i * step, top + sz / 2); ctx.rotate(i % 2 ? 0.04 : -0.04);
+    if (!im) return; ctx.save(); ctx.translate(ix + sz / 2 + i * step, top + sz / 2); 
     ctx.fillStyle = PP.ink; rr(ctx, -sz / 2 - 1, -sz / 2 + 4, sz + 2, sz + 2, 10); ctx.fill();
     ctx.fillStyle = i === 0 ? PP.yellow : "#fff"; rr(ctx, -sz / 2, -sz / 2, sz, sz, 10); ctx.fill();
     ctx.save(); rr(ctx, -sz / 2 + 4, -sz / 2 + 4, sz - 8, sz - 8, 6); ctx.clip(); cover(ctx, im, -sz / 2 + 4, -sz / 2 + 4, sz - 8, sz - 8); ctx.restore();

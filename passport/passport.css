@@ -162,8 +162,8 @@ body:after{content:"";position:fixed;left:0;right:0;bottom:0;height:90px;pointer
 .pp-calm .pp-strip{display:block;order:4;padding-right:clamp(60px,9vw,110px)}
 .pp-calm .pp-strip span{display:block;font:800 12px Nunito,sans-serif;letter-spacing:.22em;text-transform:uppercase;color:rgba(20,17,13,.6);margin-bottom:8px}
 .pp-strip>div{display:flex;align-items:center;gap:8px}
-.pp-strip img{width:44px;height:44px;border-radius:9px;border:3px solid var(--ink);padding:2px;background:#fff;object-fit:cover;box-shadow:0 3px 0 var(--ink);transform:rotate(-3deg)}
-.pp-strip img:nth-child(even){transform:rotate(3deg)}.pp-strip img.first{background:var(--by)}
+.pp-strip img{width:44px;height:44px;border-radius:9px;border:3px solid var(--ink);padding:2px;background:#fff;object-fit:cover;box-shadow:0 3px 0 var(--ink)}
+.pp-strip img.first{background:var(--by)}
 .pp-strip b{width:44px;height:44px;border-radius:9px;background:var(--ink);color:#fffaf0;font:700 15px Fredoka,Nunito,sans-serif;display:flex;align-items:center;justify-content:center}
 .pp-calm .pp-mascot{top:auto;bottom:-14px;right:12px;width:clamp(60px,8vw,96px);z-index:2}
 @media(max-width:760px){
