@@ -27,7 +27,15 @@ function passportConfig(env = process.env) {
   return { rpc, origins, screenTouchers, grassTouchers, missing, ok: !!rpc && !!(origins || screenTouchers || grassTouchers) && bad.length === 0 };
 }
 
-const scrub = (msg, rpc) => String(msg || "").split(rpc || "\u0000").join("[rpc]").replace(/api[-_]?key=[^&\s"']+/gi, "api-key=[hidden]");
+// Removes the RPC URL, and any key-looking piece of it (query values, path segments such as QuickNode's), from a message.
+function scrub(msg, rpc) {
+  let out = String(msg || "");
+  if (rpc) {
+    out = out.split(rpc).join("[rpc]");
+    try { const u = new URL(rpc); for (const v of [...u.searchParams.values(), ...u.pathname.split("/")]) if (v && v.length >= 8) out = out.split(v).join("[hidden]"); } catch {}
+  }
+  return out.replace(/api[-_]?key=[^&\s"']+/gi, "api-key=[hidden]");
+}
 
 async function das(cfg, method, params, { fetchImpl = fetch, deadline = Date.now() + BUDGET_MS } = {}) {
   const left = deadline - Date.now();
@@ -251,4 +259,4 @@ async function healthReport({ env = process.env, fetchImpl = fetch } = {}) {
   return out;
 }
 
-module.exports = { createTtlCache, holdingsCache, imageUrlCache, healthReport, buildPogMessage, verifyWalletSignature, base58Decode, pogConfig, POG_TTL_MS, SOLANA_ADDRESS_RE, passportConfig, toHttps, imageOf, collectionOf, tokenNumber, sortPieces, classify, fetchHoldings, verifiedImageFor, isPrivateIp, fetchImageSafe };
+module.exports = { scrub, createTtlCache, holdingsCache, imageUrlCache, healthReport, buildPogMessage, verifyWalletSignature, base58Decode, pogConfig, POG_TTL_MS, SOLANA_ADDRESS_RE, passportConfig, toHttps, imageOf, collectionOf, tokenNumber, sortPieces, classify, fetchHoldings, verifiedImageFor, isPrivateIp, fetchImageSafe };

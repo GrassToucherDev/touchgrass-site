@@ -146,3 +146,27 @@ test("health report flags problems without leaking the RPC url, key or secret", 
   const good = await P.healthReport({ env, fetchImpl: async (u) => (/rpc\.example/.test(u) ? ok({ result: { id: ORI } }) : ok({ linked: false })) });
   assert.equal(good.ok, true);
 });
+
+test("error scrubbing hides the RPC url, query keys and path-style keys", () => {
+  const a = P.scrub("failed https://mainnet.rpc.example/?api-key=abc123SECRETkey&x=1 now", "https://mainnet.rpc.example/?api-key=abc123SECRETkey&x=1");
+  assert.ok(!/abc123SECRETkey/.test(a));
+  const b = P.scrub("ECONNRESET at /Qk92LongPathSecretToken77/ host", "https://x.quiknode.example/Qk92LongPathSecretToken77/");
+  assert.ok(!/Qk92LongPathSecretToken77/.test(b));
+});
+
+test("nothing the browser can download mentions keys, secrets or env names", () => {
+  const fs = require("node:fs"), path = require("node:path"), root = path.join(__dirname, "..", "passport");
+  const walk = (d) => fs.readdirSync(d, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? walk(path.join(d, e.name)) : [path.join(d, e.name)]));
+  for (const f of walk(root).filter((f) => /\.(js|html|css|json)$/.test(f))) {
+    const t = fs.readFileSync(f, "utf8");
+    assert.ok(!/api[-_]?key|helius|x-passport-secret/i.test(t) && !/PASSPORT_(DAS_RPC_URL|POG_URL|PARTNER_SECRET|HEALTH_KEY|IPFS_GATEWAY)|(WAGO_ORIGINS|SCREEN_TOUCHERS|GRASS_TOUCHERS)_COLLECTION/.test(t), `${path.basename(f)} must not reference keys or server settings`);
+  }
+});
+
+test("API responses never include server settings", () => {
+  const fs = require("node:fs"), path = require("node:path"), dir = path.join(__dirname, "..", "api", "passport");
+  for (const f of fs.readdirSync(dir)) {
+    const t = fs.readFileSync(path.join(dir, f), "utf8");
+    assert.ok(!/json\([^)]*(cfg\.rpc|process\.env|PARTNER_SECRET|cfg\.secret)/.test(t), `${f} must not put settings into a response`);
+  }
+});

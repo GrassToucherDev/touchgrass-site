@@ -1,0 +1,11 @@
+{
+  "name": "passport-devnet-test",
+  "private": true,
+  "description": "Dry-run helper: makes a small TEST collection on Solana devnet for the WAGO Passport. Never touches mainnet or real wallets.",
+  "scripts": { "prepare-metadata": "node make-test-collection.js prepare", "mint": "node make-test-collection.js mint" },
+  "dependencies": {
+    "@metaplex-foundation/mpl-core": "1.10.0",
+    "@metaplex-foundation/umi": "^1.0.0",
+    "@metaplex-foundation/umi-bundle-defaults": "^1.0.0"
+  }
+}

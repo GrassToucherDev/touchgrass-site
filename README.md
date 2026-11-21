@@ -173,4 +173,8 @@ Each serverless instance keeps its own cache (best effort).
 4. Connect the test wallet (set the wallet app to devnet) and check: pieces appear, the cover changes, the PNG downloads, the Proof of Grass opt-in works, and a freshly minted piece shows up after Refresh.
 5. Switch the variables to the real mainnet values for launch and re-run the health check.
 
+**Security and dry-run checklist.** `scripts/devnet-test/CHECKLIST.md` covers locking down keys (separate Helius key, Vercel "Sensitive" variables, commands that
+prove nothing leaks), a step-by-step devnet dry run, and launch week. `scripts/devnet-test/make-test-collection.js` makes a small TEST collection on devnet
+(throwaway keypair, public devnet RPC, no private keys needed). Neither is served by the site.
+
 Tests: `node --test tests/passport.test.js`.

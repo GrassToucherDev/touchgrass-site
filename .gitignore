@@ -1,0 +1,5 @@
+.DS_Store
+scripts/devnet-test/node_modules/
+scripts/devnet-test/out/
+scripts/devnet-test/*.keypair.json
+scripts/devnet-test/.env
