@@ -128,3 +128,24 @@ All animations smooth at 60fps.
 ---
 
 **Go outside. Touch some grass. Make a difference.** 🌱
+
+---
+
+## 🛂 WAGO Passport (`/passport`)
+
+Lives at **touchgrass.today/passport** (not on Proof of Grass). A collector connects the wallet they minted with,
+sees their verified WAGO Origins and Screen Touchers, picks a cover, and downloads a 1600×900 PNG.
+Static page (`passport/`) plus two Vercel functions (`api/passport/`). No framework, no `package.json`.
+
+Set these in the Vercel project's environment variables (server-side only, never in the page):
+
+| Variable | What it is |
+| --- | --- |
+| `PASSPORT_DAS_RPC_URL` | A **DAS-capable** Solana RPC (Helius, Triton, QuickNode...). Needs `getAssetsByOwner` and `getAsset`. Contains an API key, so keep it private. |
+| `WAGO_ORIGINS_COLLECTION` | Verified **collection** address for WAGO Origins (the LaunchMyNFT collection), not a candy machine or mint authority. |
+| `SCREEN_TOUCHERS_COLLECTION` | Verified collection address for Screen Touchers. |
+| `PASSPORT_IPFS_GATEWAY` | Optional. Default `https://ipfs.io/ipfs/`. |
+
+Until the first three are set, the page says "Passport is almost ready". Ownership and collection membership are
+checked on the server; the download contains only the art, name and counts (never a wallet address).
+Tests: `node --test tests/passport.test.js`.
