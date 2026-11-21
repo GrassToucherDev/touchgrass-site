@@ -203,4 +203,52 @@ function pogConfig(env = process.env) {
   return { url, secret, ok: /^https:\/\//.test(url) && secret.length >= 16 };
 }
 
-module.exports = { buildPogMessage, verifyWalletSignature, base58Decode, pogConfig, POG_TTL_MS, SOLANA_ADDRESS_RE, passportConfig, toHttps, imageOf, collectionOf, tokenNumber, sortPieces, classify, fetchHoldings, verifiedImageFor, isPrivateIp, fetchImageSafe };
+// ── Launch-day load protection ─────────────────────────────────────────────────────────────────────────
+// Short-lived, per-instance memory cache with in-flight sharing: a burst of "Refresh collection" taps for one wallet
+// (or many tabs) becomes one RPC lookup. Failures are never cached. Best effort only: each serverless instance has its own.
+function createTtlCache({ ttlMs, max = 2000, now = () => Date.now() } = {}) {
+  const done = new Map(), flying = new Map();
+  return {
+    async get(key, loader) {
+      const hit = done.get(key);
+      if (hit && now() - hit.at < ttlMs) return hit.value;
+      if (flying.has(key)) return flying.get(key);
+      const p = (async () => { try { const value = await loader(); if (done.size >= max) done.clear(); done.set(key, { at: now(), value }); return value; } finally { flying.delete(key); } })();
+      flying.set(key, p); return p;
+    },
+    size: () => done.size,
+  };
+}
+const holdingsCache = createTtlCache({ ttlMs: 12 * 1000 });
+const imageUrlCache = createTtlCache({ ttlMs: 10 * 60 * 1000 });
+
+// ── Health report (private, see api/passport/health.js) ────────────────────────────────────────────────
+// Says which pieces are configured and whether each one actually answers. Never returns a secret, a key or the RPC URL.
+async function healthReport({ env = process.env, fetchImpl = fetch } = {}) {
+  const cfg = passportConfig(env), pog = pogConfig(env), out = { checkedAt: new Date().toISOString(), env: {}, rpc: null, collections: {}, proofOfGrass: null };
+  const set = (k) => !!(env[k] || "").trim();
+  for (const k of ["PASSPORT_DAS_RPC_URL", "WAGO_ORIGINS_COLLECTION", "SCREEN_TOUCHERS_COLLECTION", "GRASS_TOUCHERS_COLLECTION", "PASSPORT_POG_URL", "PASSPORT_PARTNER_SECRET"]) out.env[k] = set(k) ? "set" : "missing";
+  if (set("PASSPORT_PARTNER_SECRET") && (env.PASSPORT_PARTNER_SECRET || "").trim().length < 16) out.env.PASSPORT_PARTNER_SECRET = "too short (needs 16+)";
+  if (set("PASSPORT_POG_URL") && !/^https:\/\//.test(env.PASSPORT_POG_URL.trim())) out.env.PASSPORT_POG_URL = "not an https URL";
+  if (cfg.rpc) {
+    let rpcOk = false;
+    for (const [name, addr] of [["origins", cfg.origins], ["screenTouchers", cfg.screenTouchers], ["grassTouchers", cfg.grassTouchers]]) {
+      if (!addr) continue;
+      if (!SOLANA_ADDRESS_RE.test(addr)) { out.collections[name] = "not a valid address"; continue; }
+      try { const a = await das(cfg, "getAsset", { id: addr }, { fetchImpl }); out.collections[name] = a && a.id ? "found" : "not found on this network"; rpcOk = rpcOk || !!(a && a.id); }
+      catch (e) { out.collections[name] = "lookup failed: " + String(e.message).slice(0, 80); }
+    }
+    out.rpc = Object.keys(out.collections).length ? (rpcOk ? "answering" : "not confirmed") : "no collection to test with";
+  } else out.rpc = "not configured";
+  if (pog.ok) {
+    try {
+      const ctrl = new AbortController(), t = setTimeout(() => ctrl.abort(), 6000);
+      const r = await fetchImpl(pog.url, { method: "POST", signal: ctrl.signal, headers: { "content-type": "application/json", "x-passport-secret": pog.secret }, body: JSON.stringify({ wallet: "11111111111111111111111111111111" }) }).finally(() => clearTimeout(t));
+      out.proofOfGrass = r.status === 200 ? "linked, secret accepted" : r.status === 401 || r.status === 403 ? "secret rejected (does not match Proof of Grass)" : `HTTP ${r.status}`;
+    } catch { out.proofOfGrass = "unreachable"; }
+  } else out.proofOfGrass = "not configured";
+  out.ok = cfg.ok && out.rpc === "answering" && (!pog.ok || out.proofOfGrass === "linked, secret accepted");
+  return out;
+}
+
+module.exports = { createTtlCache, holdingsCache, imageUrlCache, healthReport, buildPogMessage, verifyWalletSignature, base58Decode, pogConfig, POG_TTL_MS, SOLANA_ADDRESS_RE, passportConfig, toHttps, imageOf, collectionOf, tokenNumber, sortPieces, classify, fetchHoldings, verifiedImageFor, isPrivateIp, fetchImageSafe };

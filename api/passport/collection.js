@@ -1,7 +1,7 @@
 // GET /api/passport/collection?wallet=<address>
 // Reads the wallet's WAGO Origins + Screen Touchers from chain (server-side) and returns only pieces whose
 // verified collection matches the configured addresses. Public on-chain data, so no sign-in is needed.
-const { passportConfig, fetchHoldings, pogConfig, SOLANA_ADDRESS_RE } = require("../_lib/passport");
+const { passportConfig, fetchHoldings, pogConfig, holdingsCache, SOLANA_ADDRESS_RE } = require("../_lib/passport");
 
 const hits = new Map(); // best-effort per-instance rate limit: 30 requests / minute / IP
 function limited(ip) {
@@ -25,7 +25,7 @@ module.exports = async function handler(req, res) {
     return res.status(503).json({ status: "not_configured" });
   }
   try {
-    const pieces = await fetchHoldings(wallet, cfg);
+    const pieces = await holdingsCache.get(wallet, () => fetchHoldings(wallet, cfg));
     return res.status(200).json({
       status: "ok",
       origins: pieces.filter((p) => p.collection === "origins"),

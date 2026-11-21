@@ -148,6 +148,7 @@ Set these in the Vercel project's environment variables (server-side only, never
 | `PASSPORT_IPFS_GATEWAY` | Optional. Default `https://ipfs.io/ipfs/`. |
 | `PASSPORT_POG_URL` | Optional. `https://` URL of the Proof of Grass endpoint `/api/passport/summary` (e.g. `https://proofofgrass.app/api/passport/summary`). Turns on the "Add my Proof of Grass stats" button. |
 | `PASSPORT_PARTNER_SECRET` | Optional, 16+ characters. Must be the **same value** as `PASSPORT_PARTNER_SECRET` on the Proof of Grass Vercel project. Sent only server to server. |
+| `PASSPORT_HEALTH_KEY` | Optional, 16+ characters. Switches on the private health check `/api/passport/health?key=...` (see below). Without it that URL answers 404. |
 
 Until the first three are set, the page says "Passport is almost ready". Ownership and collection membership are
 checked on the server; the download contains only the art, name and counts (never a wallet address).
@@ -156,4 +157,20 @@ checked on the server; the download contains only the art, name and counts (neve
 message (no transaction) with their wallet, and this site asks Proof of Grass for the account that has verified that same wallet.
 The signature is checked here first (10 minute window), and nothing is shown unless the wallet is already verified on a Proof of
 Grass profile. Stats shown: Outdoor Proofs, Day Streak, Grove, and the username as the default display name.
+
+**Launch-day health check.** Set `PASSPORT_HEALTH_KEY`, then open `/api/passport/health?key=<that value>`. It reports, without revealing any
+secret, key or RPC URL: which settings are in place, whether the RPC answers, whether each collection address is found on that
+network, and whether the Proof of Grass link accepts the shared secret (`ok: true` means everything is good).
+
+**Load protection.** One wallet's lookup is cached for 12 seconds and shared between simultaneous requests, verified image
+addresses are cached for 10 minutes, and each IP is rate limited, so a mint rush of refresh taps becomes few RPC calls.
+Each serverless instance keeps its own cache (best effort).
+
+**Dry run before launch (recommended).** Use a Vercel *Preview* deployment (or a separate project) so production stays untouched:
+1. Create a tiny test collection on **devnet** (any tool that makes a *verified* Metaplex collection) and mint a few pieces to a test wallet.
+2. In the Preview environment set `PASSPORT_DAS_RPC_URL` to a **devnet** DAS RPC, the three collection variables to the devnet collection address(es), and the Proof of Grass variables.
+3. Set `PASSPORT_HEALTH_KEY` and confirm `/api/passport/health` says `ok: true`.
+4. Connect the test wallet (set the wallet app to devnet) and check: pieces appear, the cover changes, the PNG downloads, the Proof of Grass opt-in works, and a freshly minted piece shows up after Refresh.
+5. Switch the variables to the real mainnet values for launch and re-run the health check.
+
 Tests: `node --test tests/passport.test.js`.
