@@ -124,3 +124,25 @@ test("Grass Touchers are classified, sorted after Screen Touchers, and optional"
   assert.equal(P.passportConfig({ PASSPORT_DAS_RPC_URL: "https://r", GRASS_TOUCHERS_COLLECTION: GT }).ok, true);
   assert.equal(P.passportConfig({ PASSPORT_DAS_RPC_URL: "https://r", GRASS_TOUCHERS_COLLECTION: "bad" }).ok, false);
 });
+
+test("holdings cache shares one lookup between simultaneous requests and never caches failures", async () => {
+  let t = 0, calls = 0; const c = P.createTtlCache({ ttlMs: 1000, now: () => t });
+  const slow = () => { calls++; return new Promise((r) => setTimeout(() => r("v" + calls), 10)); };
+  const [a, b] = await Promise.all([c.get("w", slow), c.get("w", slow)]);
+  assert.equal(calls, 1); assert.equal(a, b);
+  await c.get("w", slow); assert.equal(calls, 1);          // still fresh
+  t = 1500; await c.get("w", slow); assert.equal(calls, 2); // expired
+  await assert.rejects(c.get("bad", async () => { throw new Error("rpc down"); }));
+  assert.equal(await c.get("bad", async () => "ok"), "ok"); // failure was not stored
+});
+
+test("health report flags problems without leaking the RPC url, key or secret", async () => {
+  const env = { PASSPORT_DAS_RPC_URL: "https://rpc.example/?api-key=SECRET123", WAGO_ORIGINS_COLLECTION: ORI, PASSPORT_POG_URL: "https://pog.example/api/passport/summary", PASSPORT_PARTNER_SECRET: "0123456789abcdefSECRET" };
+  const fetchImpl = async (url) => (/rpc\.example/.test(url) ? ok({ result: { id: ORI } }) : { ok: false, status: 401, json: async () => ({}) });
+  const r = await P.healthReport({ env, fetchImpl });
+  assert.equal(r.rpc, "answering"); assert.equal(r.collections.origins, "found");
+  assert.match(r.proofOfGrass, /secret rejected/); assert.equal(r.ok, false); assert.equal(r.env.SCREEN_TOUCHERS_COLLECTION, "missing");
+  const text = JSON.stringify(r); assert.ok(!/SECRET123|0123456789abcdefSECRET|rpc\.example/.test(text));
+  const good = await P.healthReport({ env, fetchImpl: async (u) => (/rpc\.example/.test(u) ? ok({ result: { id: ORI } }) : ok({ linked: false })) });
+  assert.equal(good.ok, true);
+});

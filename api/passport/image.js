@@ -1,14 +1,15 @@
 // GET /api/passport/image?mint=<asset id>
 // Same-origin copy of a verified WAGO Origins / Screen Toucher image, so the browser can draw it onto the
 // download canvas without CORS problems. Refuses anything that isn't a verified member of a configured collection.
-const { passportConfig, verifiedImageFor, fetchImageSafe } = require("../_lib/passport");
+const { passportConfig, verifiedImageFor, fetchImageSafe, imageUrlCache } = require("../_lib/passport");
 
 module.exports = async function handler(req, res) {
   if (req.method !== "GET") return res.status(405).end();
   const cfg = passportConfig();
   if (!cfg.ok) return res.status(503).json({ error: "Passport isn't configured." });
   try {
-    const url = await verifiedImageFor(String((req.query && req.query.mint) || ""), cfg);
+    const mint = String((req.query && req.query.mint) || "");
+    const url = await imageUrlCache.get(mint, () => verifiedImageFor(mint, cfg));
     if (!url) return res.status(404).json({ error: "Not a verified WAGO piece." });
     const { buf, type } = await fetchImageSafe(url);
     res.setHeader("Content-Type", type);
