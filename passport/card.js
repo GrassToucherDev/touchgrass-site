@@ -73,7 +73,7 @@ export async function renderPassport({ piece, displayName, edition, stats, grove
   try { await Promise.all([document.fonts.load("700 80px Fredoka"), document.fonts.load("600 30px Fredoka"), document.fonts.load("800 24px Nunito")]); } catch {}
   const art = await loadImage(piece.artUrl);
   const icons = {};
-  await Promise.all(["stamp-screen-toucher", "stamp-proofs", "stamp-streak", "stamp-grove"].map(async (n) => { try { icons[n] = await loadImage(`/passport/assets/${n}.png`, false); } catch {} }));
+  await Promise.all(["stamp-origin", "stamp-screen-toucher", "stamp-proofs", "stamp-streak", "stamp-grove"].map(async (n) => { try { icons[n] = await loadImage(`/passport/assets/${n}.png`, false); } catch {} }));
   let sunImg = null; try { sunImg = await loadImage("/passport/assets/sun.png", false); } catch {}
   let bgImg = null, frameImg = null; try { [bgImg, frameImg] = await Promise.all([loadImage("/passport/assets/bg.jpg", false), loadImage("/passport/assets/frame.png", false)]); } catch {}
   let mascot = null; try { mascot = await loadImage("/assets/brand/wago-cheer.png", false); } catch {}

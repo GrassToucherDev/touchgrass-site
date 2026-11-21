@@ -154,7 +154,7 @@ const pieces = () => (S.status === "ok" ? sortPieces([...S.origins, ...S.screenT
 const displayName = () => S.name || S.pog?.username || DEFAULT_NAME;
 function stats() {
   const o = S.origins.length, s = S.screenTouchers.length;
-  const t = [{ value: o, label: o === 1 ? "Origin" : "Origins", icon: "origin" }, { value: s, label: s === 1 ? "Screen Toucher" : "Screen Touchers", icon: "stamp-screen-toucher" }];
+  const t = [{ value: o, label: o === 1 ? "Origin" : "Origins", icon: "stamp-origin" }, { value: s, label: s === 1 ? "Screen Toucher" : "Screen Touchers", icon: "stamp-screen-toucher" }];
   if (S.pog) t.push({ value: S.pog.proofs, label: "Outdoor Proofs", icon: "stamp-proofs" }, { value: S.pog.streak, label: "Day Streak", icon: "stamp-streak" });
   return t;
 }
@@ -257,7 +257,7 @@ function render() {
         h("img", { class: "pp-mascot", src: "/assets/brand/wago-cheer.png", alt: "", "aria-hidden": "true" }),
         h("div", { class: "pp-eyebrow" }, h("i"), edition, h("i")),
         nameEl,
-        h("div", { class: "pp-stats" }, stats().map((s) => h("div", { class: "pp-stat" }, s.icon === "origin" ? sunBadge() : h("img", { class: "pp-stat-ic", src: `/passport/assets/${s.icon}.png`, alt: "", width: 56, height: 56 }), h("div", { class: "pp-stat-tx" }, h("b", null, s.value), h("span", null, s.label))))),
+        h("div", { class: "pp-stats" }, stats().map((s) => h("div", { class: "pp-stat" }, h("img", { class: "pp-stat-ic", src: `/passport/assets/${s.icon}.png`, alt: "", width: 56, height: 56 }), h("div", { class: "pp-stat-tx" }, h("b", null, s.value), h("span", null, s.label))))),
         S.pog && h("p", { class: "pp-fine pp-pogline", "data-testid": "pog-line" }, S.pog.grove ? `Grove: ${S.pog.grove} \u00b7 ` : "", `Best streak ${S.pog.best}`),
         S.pogEnabled && !S.pog && h("div", { class: "pp-pogask" },
           h("button", { class: "pp-btn pp-btn-ghost pp-btn-sm", "data-testid": "add-pog", onclick: addPog, disabled: S.pogBusy }, S.pogBusy ? "Waiting for your wallet\u2026" : "Add my Proof of Grass stats"),
