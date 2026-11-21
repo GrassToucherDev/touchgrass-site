@@ -129,3 +129,6 @@ body:after{content:"";position:fixed;left:0;right:0;bottom:0;height:90px;pointer
 
 .pp-grassbadge{display:flex;align-items:center;justify-content:center;border-radius:50%;background:var(--bg);border:3px solid var(--ink);color:#fffaf0}.pp-grassbadge svg{width:72%;height:72%}
 .pp-stat-tx b.pp-stat-txt{font-size:clamp(17px,2.4vw,24px);line-height:1.15;overflow-wrap:anywhere}
+
+.pp-seal-pill span{bottom:-8px;left:12%;right:12%;padding:3px 0;background:var(--by);border:2.5px solid var(--ink);border-radius:999px;color:var(--ink);-webkit-text-stroke:0;font-size:9px;box-shadow:0 2px 0 var(--ink)}
+@media(max-width:760px){.pp-seal-pill span{font-size:8px;bottom:-6px}}

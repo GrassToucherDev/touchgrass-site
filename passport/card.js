@@ -108,12 +108,15 @@ export async function renderPassport({ piece, displayName, edition, stats }) {
   ctx.fillStyle = PP.ink; ctx.font = `700 ${px}px ${DISPLAY}`; ctx.fillText(plate, ax + as / 2, ply + ph / 2 + px * 0.34);
 
   // verified seal on the frame corner (brand art for Screen Touchers, drawn badge for Origins until its art exists)
-  const sealImg = icons[/origin/i.test(String(edition || "")) ? "seal-origins" : "seal-screen-toucher"];
+  const isOrig = /origin/i.test(String(edition || "")), sealImg = icons[isOrig ? "stamp-origin" : "seal-screen-toucher"];
   ctx.save(); ctx.translate(ax + as - 8, ay + 6); ctx.rotate(0.15);
   if (sealImg) {
     ctx.shadowColor = "rgba(20,17,13,0.35)"; ctx.shadowOffsetY = 6; ctx.drawImage(sealImg, -80, -80, 160, 160); ctx.shadowColor = "transparent";
+    if (isOrig) { sticker(ctx, -58, 46, 116, 38, 19, PP.yellow, 5, 4); ctx.textAlign = "center"; ctx.fillStyle = PP.ink; ctx.font = `700 17px ${DISPLAY}`; if ("letterSpacing" in ctx) ctx.letterSpacing = "2px"; ctx.fillText("VERIFIED", 0, 72); if ("letterSpacing" in ctx) ctx.letterSpacing = "0px"; }
+    else {
     ctx.textAlign = "center"; ctx.font = `700 16px ${DISPLAY}`; if ("letterSpacing" in ctx) ctx.letterSpacing = "2px"; ctx.fillStyle = PP.paper; ctx.lineWidth = 4; ctx.strokeStyle = PP.ink; ctx.lineJoin = "round";
     ctx.strokeText("VERIFIED", 0, 58); ctx.fillText("VERIFIED", 0, 58); if ("letterSpacing" in ctx) ctx.letterSpacing = "0px";
+    }
   } else {
     ctx.fillStyle = PP.ink; ctx.beginPath(); ctx.arc(0, 8, 70, 0, Math.PI * 2); ctx.fill();
     ctx.fillStyle = PP.yellow; ctx.beginPath(); ctx.arc(0, 0, 70, 0, Math.PI * 2); ctx.fill();

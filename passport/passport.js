@@ -160,7 +160,7 @@ const pieces = () => (S.status === "ok" ? sortPieces([...S.origins, ...S.screenT
 const displayName = () => S.name || S.pog?.username || DEFAULT_NAME;
 function stats() {
   const t = [
-    { value: S.origins.length, label: "Origins", icon: "stamp-origin" },
+    { value: S.origins.length, label: "Origins", icon: "seal-origins" },
     { value: S.screenTouchers.length, label: "Screen Touchers", icon: "stamp-screen-toucher" },
     { value: S.grassTouchers.length, label: "Grass Touchers", icon: "stamp-grass" },
   ];
@@ -264,7 +264,7 @@ function render() {
     h("section", { class: "pp-card", "data-testid": "passport-card" },
       h("div", { class: "pp-art-wrap" },
         h("div", { class: "pp-art" }, h("img", { src: artUrl(cover.id), alt: cover.name, "data-testid": "cover-art" }), h("div", { class: "pp-plate" }, cover.name)),
-        cover.collection === "grass_touchers" ? h("div", { class: "pp-seal", "aria-hidden": "true" }, sunIcon(), h("span", null, "VERIFIED"), h("span", null, "GRASS")) : h("div", { class: "pp-seal-img", "aria-hidden": "true" }, h("img", { src: `/passport/assets/seal-${cover.collection === "origins" ? "origins" : "screen-toucher"}.png`, alt: "" }), h("span", null, "VERIFIED"))),
+        cover.collection === "grass_touchers" ? h("div", { class: "pp-seal", "aria-hidden": "true" }, sunIcon(), h("span", null, "VERIFIED"), h("span", null, "GRASS")) : h("div", { class: "pp-seal-img" + (cover.collection === "origins" ? " pp-seal-pill" : ""), "aria-hidden": "true" }, h("img", { src: cover.collection === "origins" ? "/passport/assets/stamp-origin.png" : "/passport/assets/seal-screen-toucher.png", alt: "" }), h("span", null, "VERIFIED"))),
       h("div", { class: "pp-info" },
         h("img", { class: "pp-mascot", src: "/assets/brand/wago-cheer.png", alt: "", "aria-hidden": "true" }),
         h("div", { class: "pp-eyebrow" }, h("i"), edition, h("i")),
