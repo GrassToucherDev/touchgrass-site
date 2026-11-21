@@ -80,7 +80,7 @@ export async function renderPassport({ piece, displayName, edition, stats }) {
   try { await Promise.all([document.fonts.load("700 80px Fredoka"), document.fonts.load("600 30px Fredoka"), document.fonts.load("800 24px Nunito")]); } catch {}
   const art = await loadImage(piece.artUrl);
   const icons = {};
-  await Promise.all(["seal-origins", "seal-screen-toucher", "stamp-origin", "stamp-screen-toucher", "stamp-proofs", "stamp-streak", "stamp-grove"].map(async (n) => { try { icons[n] = await loadImage(`/passport/assets/${n}.png`, false); } catch {} }));
+  await Promise.all(["seal-origins", "seal-screen-toucher", "seal-grass-touchers", "stamp-grass", "stamp-origin", "stamp-screen-toucher", "stamp-proofs", "stamp-streak", "stamp-grove"].map(async (n) => { try { icons[n] = await loadImage(`/passport/assets/${n}.png`, false); } catch {} }));
   let sunImg = null; try { sunImg = await loadImage("/passport/assets/sun.png", false); } catch {}
   let bgImg = null, frameImg = null; try { [bgImg, frameImg] = await Promise.all([loadImage("/passport/assets/bg.jpg", false), loadImage("/passport/assets/frame.png", false)]); } catch {}
   let mascot = null; try { mascot = await loadImage("/assets/brand/wago-cheer.png", false); } catch {}
@@ -108,7 +108,7 @@ export async function renderPassport({ piece, displayName, edition, stats }) {
   ctx.fillStyle = PP.ink; ctx.font = `700 ${px}px ${DISPLAY}`; ctx.fillText(plate, ax + as / 2, ply + ph / 2 + px * 0.34);
 
   // verified seal on the frame corner (brand art for Screen Touchers, drawn badge for Origins until its art exists)
-  const isOrig = /origin/i.test(String(edition || "")), sealImg = icons[isOrig ? "stamp-origin" : "seal-screen-toucher"];
+  const isOrig = /origin/i.test(String(edition || "")), isGrass = /grass/i.test(String(edition || "")), sealImg = icons[isOrig ? "stamp-origin" : isGrass ? "seal-grass-touchers" : "seal-screen-toucher"];
   ctx.save(); ctx.translate(ax + as - 8, ay + 6); ctx.rotate(0.15);
   if (sealImg) {
     ctx.shadowColor = "rgba(20,17,13,0.35)"; ctx.shadowOffsetY = 6; ctx.drawImage(sealImg, -80, -80, 160, 160); ctx.shadowColor = "transparent";

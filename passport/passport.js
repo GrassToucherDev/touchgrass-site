@@ -158,6 +158,7 @@ async function load(wallet, { quiet = false } = {}) {
 
 const pieces = () => (S.status === "ok" ? sortPieces([...S.origins, ...S.screenTouchers, ...S.grassTouchers]) : []);
 const displayName = () => S.name || S.pog?.username || DEFAULT_NAME;
+const editionOf = (c) => (c.collection === "origins" ? "Origins Edition" : c.collection === "grass_touchers" ? "Grass Touchers" : "Screen Touchers");
 function stats() {
   const t = [
     { value: S.origins.length, label: "Origins", icon: "seal-origins" },
@@ -200,7 +201,7 @@ async function download() {
   if (!cover || S.busy) return;
   S.busy = true; S.note = ""; render();
   try {
-    const canvas = await renderPassport({ piece: { name: cover.name, artUrl: artUrl(cover.id) }, displayName: displayName(), edition: cover.collection === "origins" ? "Origins Edition" : "Screen Touchers", stats: stats() });
+    const canvas = await renderPassport({ piece: { name: cover.name, artUrl: artUrl(cover.id) }, displayName: displayName(), edition: editionOf(cover), stats: stats() });
     const blob = await canvasToBlob(canvas);
     const url = URL.createObjectURL(blob);
     const a = h("a", { href: url, download: "wago-passport.png" });
@@ -255,7 +256,7 @@ function render() {
   }
 
   // owned
-  const edition = cover.collection === "origins" ? "Origins Edition" : cover.collection === "grass_touchers" ? "Grass Touchers" : "Screen Touchers";
+  const edition = editionOf(cover);
   const nameEl = S.editing
     ? h("form", { class: "pp-edit", onsubmit: (e) => { e.preventDefault(); const n = cleanDisplayName(e.currentTarget.elements.n.value); S.name = n; store.set(`passport_name:${S.wallet}`, n); S.editing = false; render(); } },
         h("input", { name: "n", value: S.name, maxlength: NAME_MAX, placeholder: DEFAULT_NAME, "aria-label": "Display name", autofocus: true }), h("button", { class: "pp-btn pp-btn-sm", type: "submit" }, "Save"))
@@ -264,12 +265,12 @@ function render() {
     h("section", { class: "pp-card", "data-testid": "passport-card" },
       h("div", { class: "pp-art-wrap" },
         h("div", { class: "pp-art" }, h("img", { src: artUrl(cover.id), alt: cover.name, "data-testid": "cover-art" }), h("div", { class: "pp-plate" }, cover.name)),
-        cover.collection === "grass_touchers" ? h("div", { class: "pp-seal", "aria-hidden": "true" }, sunIcon(), h("span", null, "VERIFIED"), h("span", null, "GRASS")) : h("div", { class: "pp-seal-img" + (cover.collection === "origins" ? " pp-seal-pill" : ""), "aria-hidden": "true" }, h("img", { src: cover.collection === "origins" ? "/passport/assets/stamp-origin.png" : "/passport/assets/seal-screen-toucher.png", alt: "" }), h("span", null, "VERIFIED"))),
+        h("div", { class: "pp-seal-img" + (cover.collection === "origins" ? " pp-seal-pill" : ""), "aria-hidden": "true" }, h("img", { src: cover.collection === "origins" ? "/passport/assets/stamp-origin.png" : cover.collection === "grass_touchers" ? "/passport/assets/seal-grass-touchers.png" : "/passport/assets/seal-screen-toucher.png", alt: "" }), h("span", null, "VERIFIED"))),
       h("div", { class: "pp-info" },
         h("img", { class: "pp-mascot", src: "/assets/brand/wago-cheer.png", alt: "", "aria-hidden": "true" }),
         h("div", { class: "pp-eyebrow" }, h("i"), edition, h("i")),
         nameEl,
-        h("div", { class: "pp-stats" }, stats().map((s) => h("div", { class: "pp-stat" }, s.icon === "stamp-grass" ? grassBadge() : h("img", { class: "pp-stat-ic", src: `/passport/assets/${s.icon}.png`, alt: "", width: 56, height: 56 }), h("div", { class: "pp-stat-tx" }, h("b", { class: s.text ? "pp-stat-txt" : "" }, s.value), h("span", null, s.label))))),
+        h("div", { class: "pp-stats" }, stats().map((s) => h("div", { class: "pp-stat" }, h("img", { class: "pp-stat-ic", src: `/passport/assets/${s.icon}.png`, alt: "", width: 56, height: 56 }), h("div", { class: "pp-stat-tx" }, h("b", { class: s.text ? "pp-stat-txt" : "" }, s.value), h("span", null, s.label))))),
         S.pog && h("p", { class: "pp-fine pp-pogline", "data-testid": "pog-line" }, `Best streak ${S.pog.best}`),
         S.pogEnabled && !S.pog && h("div", { class: "pp-pogask" },
           h("button", { class: "pp-btn pp-btn-ghost pp-btn-sm", "data-testid": "add-pog", onclick: addPog, disabled: S.pogBusy }, S.pogBusy ? "Waiting for your wallet\u2026" : "Add my Proof of Grass stats"),
