@@ -1,0 +1,12 @@
+{
+  "name": "WAGO Origins TEST #4",
+  "symbol": "WTEST",
+  "description": "Devnet test piece. Not a real mint.",
+  "image": "https://touchgrass.today/assets/hero/wago-face.png",
+  "attributes": [
+    {
+      "trait_type": "Test",
+      "value": "4"
+    }
+  ]
+}
