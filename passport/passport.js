@@ -3,7 +3,7 @@
 // download a 1600×900 PNG. Ownership is verified server-side (/api/passport/collection); this page never
 // trusts NFT data from the browser. Plain JavaScript, no framework. NFT names come from chain data, so they
 // are only ever written with textContent / attributes, never innerHTML.
-import { renderPassport, canvasToBlob, edgeColor } from "./card.js";
+import { renderPassport, canvasToBlob } from "./card.js";
 
 const NAME_MAX = 24, DEFAULT_NAME = "WAGO Collector";
 const $ = (id) => document.getElementById(id);
@@ -266,7 +266,7 @@ function render() {
     h("div", { class: "pp-looks", role: "group", "aria-label": "Card style" }, h("span", null, "Style"), ["sticker", "calm"].map((l) => h("button", { class: "pp-look" + (S.layout === l ? " on" : ""), "aria-pressed": String(S.layout === l), "data-testid": "look-" + l, onclick: () => { S.layout = l; store.set("passport_layout", l); render(); } }, l === "sticker" ? "Sticker" : "Calm"))),
     h("section", { class: "pp-card" + (S.layout === "calm" ? " pp-calm" : ""), "data-testid": "passport-card" },
       h("div", { class: "pp-art-wrap" },
-        h("div", { class: "pp-art" }, h("img", { src: artUrl(cover.id), alt: cover.name, "data-testid": "cover-art", onload: (e) => { const card = e.currentTarget.closest(".pp-card"); if (card) card.style.setProperty("--calm-bg", edgeColor(e.currentTarget)); } }), h("div", { class: "pp-plate" }, cover.name)),
+        h("div", { class: "pp-art" }, h("img", { src: artUrl(cover.id), alt: cover.name, "data-testid": "cover-art" }), h("div", { class: "pp-plate" }, cover.name)),
         h("div", { class: "pp-seal-img" + (cover.collection === "origins" ? " pp-seal-pill" : ""), "aria-hidden": "true" }, h("img", { src: cover.collection === "origins" ? "/passport/assets/stamp-origin.png" : cover.collection === "grass_touchers" ? "/passport/assets/seal-grass-touchers.png" : "/passport/assets/seal-screen-toucher.png", alt: "" }), h("span", null, "VERIFIED"))),
       h("div", { class: "pp-info" },
         h("img", { class: "pp-mascot", src: "/assets/brand/wago-cheer.png", alt: "", "aria-hidden": "true" }),
