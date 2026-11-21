@@ -73,7 +73,7 @@ function tile(ctx, x, y, w, h, st, fill, icons) {
 }
 
 // piece: { name, artUrl }  stats: [{ value, label }] (max 4)
-export async function renderPassport({ piece, displayName, edition, stats }) {
+export async function renderPassport({ piece, displayName, edition, stats, layout, strip, stripTotal }) {
   const W = PASSPORT_W, H = PASSPORT_H;
   const c = document.createElement("canvas"); c.width = W; c.height = H;
   const ctx = c.getContext("2d");
@@ -84,6 +84,8 @@ export async function renderPassport({ piece, displayName, edition, stats }) {
   let sunImg = null; try { sunImg = await loadImage("/passport/assets/sun.png", false); } catch {}
   let bgImg = null, frameImg = null; try { [bgImg, frameImg] = await Promise.all([loadImage("/passport/assets/bg.jpg", false), loadImage("/passport/assets/frame.png", false)]); } catch {}
   let mascot = null; try { mascot = await loadImage("/assets/brand/wago-cheer.png", false); } catch {}
+
+  if (layout === "calm") { await drawCalm(ctx, { art, icons, mascot, piece, displayName, edition, stats, strip, stripTotal }); return c; }
 
   // sunrise orange + 7-ray burst
   if (bgImg) ctx.drawImage(bgImg, 0, 0, W, H);
@@ -148,6 +150,97 @@ export async function renderPassport({ piece, displayName, edition, stats }) {
   sticker(ctx, ax + as / 2 - uw / 2, 770, uw, 46, 23, PP.paper, 5, 5); ctx.fillStyle = PP.ink; ctx.fillText(url, ax + as / 2, 802);
   if (frameImg) ctx.drawImage(frameImg, 0, 0, W, H);
   return c;
+}
+
+// Dominant colour around the artwork's edge, so a flat background can melt into the art. A busy edge (several
+// colours, no clear winner) falls back to brand sunrise orange.
+export function edgeColor(img) {
+  try {
+    const n = 32, c = document.createElement("canvas"); c.width = c.height = n;
+    const x = c.getContext("2d", { willReadFrequently: true }); x.drawImage(img, 0, 0, n, n);
+    const d = x.getImageData(0, 0, n, n).data, bins = new Map(); let k = 0;
+    for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) {
+      if (i > 1 && i < n - 2 && j > 1 && j < n - 2) continue;
+      const o = (i * n + j) * 4; if (d[o + 3] < 200) continue; k++;
+      const key = ((d[o] >> 4) << 8) | ((d[o + 1] >> 4) << 4) | (d[o + 2] >> 4), e = bins.get(key) || [0, 0, 0, 0];
+      e[0]++; e[1] += d[o]; e[2] += d[o + 1]; e[3] += d[o + 2]; bins.set(key, e);
+    }
+    let best = null; for (const e of bins.values()) if (!best || e[0] > best[0]) best = e;
+    if (!best || best[0] / k < 0.4) return PP.orange2;
+    return `rgb(${Math.round(best[1] / best[0])},${Math.round(best[2] / best[0])},${Math.round(best[3] / best[0])})`;
+  } catch { return PP.orange2; }
+}
+function cover(ctx, img, x, y, w, h) {
+  const s = Math.max(w / img.width, h / img.height), dw = img.width * s, dh = img.height * s;
+  ctx.drawImage(img, x + (w - dw) / 2, y + (h - dh) / 2, dw, dh);
+}
+function spaced(ctx, px) { if ("letterSpacing" in ctx) ctx.letterSpacing = px + "px"; }
+
+// Calm layout: flat colour matched to the art, big bleeding art, one cream info panel, quiet stat grid, owned-pieces strip.
+async function drawCalm(ctx, { art, icons, mascot, piece, displayName, edition, stats, strip, stripTotal }) {
+  const W = PASSPORT_W, H = PASSPORT_H;
+  ctx.fillStyle = edgeColor(art); ctx.fillRect(0, 0, W, H);
+  ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = "high";
+
+  // art bleeds off the left, top and bottom
+  ctx.save(); rr(ctx, -80, 0, 900, H, 56); ctx.clip(); cover(ctx, art, -80, 0, 900, H); ctx.restore();
+  ctx.lineWidth = 6; ctx.strokeStyle = PP.ink; rr(ctx, -80, 0, 900, H, 56); ctx.stroke();
+
+  // token name (top-left) and url (bottom-left) pills
+  const plate = String(piece.name || ""); ctx.textAlign = "center";
+  const ppx = fit(ctx, plate, 520, 34, 22, 700, DISPLAY), pw = Math.min(620, ctx.measureText(plate).width + 70);
+  sticker(ctx, 44, 44, pw, 62, 31, PP.yellow, 5, 6); ctx.fillStyle = PP.ink; ctx.fillText(plate, 44 + pw / 2, 44 + 31 + ppx * 0.34);
+  ctx.font = `700 24px ${DISPLAY}`; const url = "touchgrass.today/passport", uw = ctx.measureText(url).width + 50;
+  sticker(ctx, 44, H - 44 - 50, uw, 50, 25, PP.paper, 5, 5); ctx.fillStyle = PP.ink; ctx.fillText(url, 44 + uw / 2, H - 44 - 50 + 34);
+
+  // info panel
+  const px = 760, py = 70, pw2 = 780, ph = 760, ix = px + 52, ir = px + pw2 - 52, iw = ir - ix;
+  sticker(ctx, px, py, pw2, ph, 44, PP.paper, 6, 10);
+  ctx.textAlign = "left"; ctx.font = `700 24px ${DISPLAY}`; spaced(ctx, 5); ctx.fillStyle = "#e8650a"; ctx.fillText("WAGO PASSPORT", ix, py + 86); spaced(ctx, 0);
+  ctx.font = `600 32px ${DISPLAY}`; fit(ctx, displayName, iw, 112, 54, 700, DISPLAY); outlined(ctx, displayName, ix, py + 214, 14, PP.orange);
+  const ed = String(edition || "").toUpperCase(); ctx.font = `700 22px ${DISPLAY}`; spaced(ctx, 3);
+  const edw = ctx.measureText(ed).width + 48; sticker(ctx, ix, py + 244, edw, 46, 23, PP.yellow, 4, 4); ctx.fillStyle = PP.ink; ctx.fillText(ed, ix + 24, py + 244 + 32); spaced(ctx, 0);
+
+  // stat grid
+  const list = (stats || []).slice(0, 6), rows = Math.ceil(list.length / 3) || 1, cols = 3, gap = 16, cw = (iw - gap * (cols - 1)) / cols, ch = rows === 1 ? 200 : 134, k = ch / 140, gy = py + 318;
+  const nums = ["#f26a00", PP.greenD];
+  list.forEach((st, i) => {
+    const x = ix + (i % cols) * (cw + gap), y = gy + Math.floor(i / cols) * (ch + gap);
+    ctx.fillStyle = "#fff0d2"; rr(ctx, x, y, cw, ch, 26); ctx.fill(); ctx.lineWidth = 3; ctx.strokeStyle = "rgba(20,17,13,0.14)"; rr(ctx, x, y, cw, ch, 26); ctx.stroke();
+    const ic = 52 * k, im = icons[st.icon]; if (im) ctx.drawImage(im, x + cw - ic - 12, y + 12, ic, ic);
+    ctx.textAlign = "left"; ctx.fillStyle = nums[i % 2];
+    if (st.text) { fit(ctx, st.value, cw - 40, 34 * k, 18, 700, DISPLAY); ctx.fillText(st.value, x + 22, y + 98 * k); }
+    else { fit(ctx, String(st.value), cw - 44 - ic, 62 * k, 30, 700, DISPLAY); ctx.fillText(String(st.value), x + 22, y + 98 * k); }
+    ctx.fillStyle = PP.ink; fit(ctx, st.label, cw - 36, 19 * k, 13, 800, SANS); ctx.fillText(st.label, x + 22, y + 128 * k);
+  });
+
+  // owned-pieces strip
+  const total = Math.max(stripTotal || 0, (strip || []).length), shown = (strip || []).slice(0, 7), sy = py + ph - 112;
+  ctx.textAlign = "left"; ctx.font = `800 18px ${SANS}`; spaced(ctx, 3); ctx.fillStyle = "rgba(20,17,13,0.6)";
+  ctx.fillText(`MY COLLECTION · ${total} ${total === 1 ? "PIECE" : "PIECES"}`, ix, sy); spaced(ctx, 0);
+  const imgs = await Promise.all(shown.map((p) => loadImage(p.artUrl).catch(() => null))), r = 33, step = 56, cy = sy + 20 + r;
+  imgs.forEach((im, i) => {
+    const cx = ix + r + i * step; if (!im) return;
+    ctx.fillStyle = i === 0 ? PP.yellow : PP.ink; ctx.beginPath(); ctx.arc(cx, cy, r + (i === 0 ? 7 : 4), 0, Math.PI * 2); ctx.fill();
+    ctx.save(); ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.clip(); cover(ctx, im, cx - r, cy - r, r * 2, r * 2); ctx.restore();
+    ctx.lineWidth = 4; ctx.strokeStyle = PP.ink; ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke();
+  });
+  if (total > shown.length) {
+    const cx = ix + r + shown.length * step + 6; ctx.fillStyle = PP.ink; ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = PP.paper; ctx.textAlign = "center"; ctx.font = `700 26px ${DISPLAY}`; ctx.fillText(`+${total - shown.length}`, cx, cy + 9);
+  }
+
+  // verified seal on the panel corner, small mascot peeking from the bottom corner
+  const isOrig = /origin/i.test(String(edition || "")), isGrass = /grass/i.test(String(edition || "")), seal = icons[isOrig ? "stamp-origin" : isGrass ? "seal-grass-touchers" : "seal-screen-toucher"];
+  ctx.save(); ctx.translate(px + pw2 - 62, py + 40); ctx.rotate(0.15);
+  if (seal) {
+    ctx.shadowColor = "rgba(20,17,13,0.3)"; ctx.shadowOffsetY = 5; ctx.drawImage(seal, -72, -72, 144, 144); ctx.shadowColor = "transparent"; ctx.textAlign = "center";
+    if (isOrig) { sticker(ctx, -52, 42, 104, 34, 17, PP.yellow, 4, 4); ctx.fillStyle = PP.ink; ctx.font = `700 15px ${DISPLAY}`; spaced(ctx, 2); ctx.fillText("VERIFIED", 0, 65); }
+    else { ctx.font = `700 15px ${DISPLAY}`; spaced(ctx, 2); ctx.fillStyle = PP.paper; ctx.lineWidth = 4; ctx.strokeStyle = PP.ink; ctx.lineJoin = "round"; ctx.strokeText("VERIFIED", 0, 52); ctx.fillText("VERIFIED", 0, 52); }
+    spaced(ctx, 0);
+  } else { ctx.fillStyle = PP.ink; ctx.beginPath(); ctx.arc(0, 6, 60, 0, Math.PI * 2); ctx.fill(); ctx.fillStyle = PP.yellow; ctx.beginPath(); ctx.arc(0, 0, 60, 0, Math.PI * 2); ctx.fill(); ctx.lineWidth = 6; ctx.strokeStyle = PP.ink; ctx.stroke(); miniSun(ctx, 0, -8, 9, PP.orange); }
+  ctx.restore();
+  if (mascot) { const mh = 128, mw = (mascot.width / mascot.height) * mh; ctx.save(); ctx.shadowColor = "rgba(20,17,13,0.3)"; ctx.shadowOffsetY = 5; ctx.drawImage(mascot, px + pw2 - mw - 28, py + ph - mh + 8, mw, mh); ctx.restore(); }
 }
 
 export function canvasToBlob(c) {

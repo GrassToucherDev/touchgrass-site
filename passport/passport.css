@@ -132,3 +132,47 @@ body:after{content:"";position:fixed;left:0;right:0;bottom:0;height:90px;pointer
 
 .pp-seal-pill span{bottom:-8px;left:12%;right:12%;padding:3px 0;background:var(--by);border:2.5px solid var(--ink);border-radius:999px;color:var(--ink);-webkit-text-stroke:0;font-size:9px;box-shadow:0 2px 0 var(--ink)}
 @media(max-width:760px){.pp-seal-pill span{font-size:8px;bottom:-6px}}
+
+/* ===== Style switch + Calm layout (flat art-matched colour, big art, one cream panel, quiet stats, collection strip) ===== */
+.pp-looks{display:flex;align-items:center;gap:8px;margin:0 0 14px;font:800 13px Nunito,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#fff;text-shadow:0 2px 0 rgba(20,17,13,.5)}
+.pp-look{border:3px solid var(--ink);background:#fff;color:var(--ink);border-radius:999px;padding:6px 16px;min-height:36px;font:700 14px Fredoka,Nunito,sans-serif;letter-spacing:.04em;text-transform:none;cursor:pointer;box-shadow:0 3px 0 var(--ink)}
+.pp-look.on{background:var(--by)}
+.pp-look:focus-visible{outline:3px solid #fff;outline-offset:2px}
+.pp-kicker,.pp-strip{display:none}
+.pp-card.pp-calm{--calm-bg:#ffb866;background:var(--calm-bg);padding:0;overflow:hidden;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);align-items:center;border-radius:36px}
+.pp-calm .pp-art-wrap{align-self:stretch}
+.pp-calm .pp-art{border:0;border-radius:0;box-shadow:none;background:none;height:100%;aspect-ratio:1/1}
+.pp-calm .pp-plate{left:18px;right:auto;transform:none;bottom:auto;top:18px;max-width:80%;font-size:clamp(13px,2vw,20px)}
+.pp-calm .pp-seal-img{left:auto;right:-34px;top:14px;width:clamp(78px,9vw,112px)}
+.pp-calm .pp-info{position:relative;z-index:2;margin:22px 22px 22px -34px;padding:26px 28px 22px;background:#fffaf0;border:5px solid var(--ink);border-radius:34px;box-shadow:0 8px 0 var(--ink);gap:12px}
+.pp-calm .pp-info>*{order:5}
+.pp-calm .pp-kicker{display:block;order:0;font:700 13px Fredoka,Nunito,sans-serif;letter-spacing:.3em;color:#e8650a}
+.pp-calm .pp-name,.pp-calm .pp-edit{order:1;color:var(--bo);padding-right:clamp(40px,8vw,90px)}
+.pp-calm .pp-eyebrow{order:2;background:var(--by);color:var(--ink);align-self:flex-start;padding:4px 14px;font-size:13px;box-shadow:0 3px 0 var(--ink)}
+.pp-calm .pp-stats{order:3;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.pp-calm .pp-stats .pp-stat{position:relative;display:block;text-align:left;background:#fff0d2;border:2px solid rgba(20,17,13,.14);border-radius:20px;box-shadow:none;padding:12px 12px 10px}
+.pp-calm .pp-stat-ic{position:absolute;top:8px;right:8px;width:clamp(28px,3.6vw,44px);height:clamp(28px,3.6vw,44px)}
+.pp-calm .pp-stat-tx{text-align:left}
+.pp-calm .pp-stat b{font:700 clamp(28px,3.6vw,46px)/1.05 Fredoka,Nunito,sans-serif;color:#f26a00;padding-right:30px}
+.pp-calm .pp-stat:nth-child(even) b{color:var(--bgd)}
+.pp-calm .pp-stat b.pp-stat-txt{font-size:clamp(15px,2vw,22px);padding-right:0;margin-top:14px}
+.pp-calm .pp-stat span{font-size:clamp(11px,1.3vw,14px);font-weight:800}
+.pp-calm .pp-strip{display:block;order:4;margin-top:4px;padding-right:clamp(60px,9vw,110px)}
+.pp-calm .pp-strip span{display:block;font:800 12px Nunito,sans-serif;letter-spacing:.22em;text-transform:uppercase;color:rgba(20,17,13,.6);margin-bottom:8px}
+.pp-strip>div{display:flex;align-items:center}
+.pp-strip img{width:44px;height:44px;border-radius:50%;border:3px solid var(--ink);object-fit:cover;background:#fff;margin-left:-10px}
+.pp-strip img:first-child{margin-left:0}.pp-strip img.first{box-shadow:0 0 0 4px var(--by)}
+.pp-strip b{width:44px;height:44px;border-radius:50%;background:var(--ink);color:#fffaf0;font:700 15px Fredoka,Nunito,sans-serif;display:flex;align-items:center;justify-content:center;margin-left:-10px;border:3px solid var(--ink)}
+.pp-calm .pp-mascot{top:auto;bottom:-14px;right:12px;width:clamp(60px,8vw,96px)}
+@media(max-width:760px){
+  .pp-card.pp-calm{grid-template-columns:1fr;border-radius:28px}
+  .pp-calm .pp-art{height:auto}
+  .pp-calm .pp-seal-img{right:12px;top:12px;width:78px}
+  .pp-calm .pp-info{margin:-34px 12px 14px;padding:18px 16px 18px}
+  .pp-calm .pp-strip img,.pp-calm .pp-strip b{width:38px;height:38px}
+  .pp-calm .pp-stats{gap:8px}
+}
+.pp-calm .pp-art-wrap{position:static}
+.pp-calm .pp-seal-img{right:16px;left:auto;top:10px}
+.pp-calm .pp-stat b.pp-stat-txt{margin-top:26px;font-size:clamp(14px,1.8vw,20px)}
+@media(max-width:760px){.pp-calm .pp-seal-img{right:12px;top:12px}.pp-calm .pp-stat b.pp-stat-txt{margin-top:22px}}

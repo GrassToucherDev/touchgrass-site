@@ -3,7 +3,7 @@
 // download a 1600×900 PNG. Ownership is verified server-side (/api/passport/collection); this page never
 // trusts NFT data from the browser. Plain JavaScript, no framework. NFT names come from chain data, so they
 // are only ever written with textContent / attributes, never innerHTML.
-import { renderPassport, canvasToBlob } from "./card.js";
+import { renderPassport, canvasToBlob, edgeColor } from "./card.js";
 
 const NAME_MAX = 24, DEFAULT_NAME = "WAGO Collector";
 const $ = (id) => document.getElementById(id);
@@ -74,7 +74,7 @@ const WALLETS = [
 const detected = () => WALLETS.filter((w) => w.get());
 const hooked = new Set();
 
-const S = { pog: null, pogEnabled: false, pogBusy: false, pogNote: "", wallet: null, walletId: null, status: "idle", origins: [], screenTouchers: [], grassTouchers: [], coverId: null, name: "", editing: false, busy: false, note: "", refreshing: false, refreshError: false, checkedOnce: false };
+const S = { layout: store.get("passport_layout") === "calm" ? "calm" : "sticker", pog: null, pogEnabled: false, pogBusy: false, pogNote: "", wallet: null, walletId: null, status: "idle", origins: [], screenTouchers: [], grassTouchers: [], coverId: null, name: "", editing: false, busy: false, note: "", refreshing: false, refreshError: false, checkedOnce: false };
 let reqId = 0;
 
 function setWallet(addr, walletId) {
@@ -201,7 +201,8 @@ async function download() {
   if (!cover || S.busy) return;
   S.busy = true; S.note = ""; render();
   try {
-    const canvas = await renderPassport({ piece: { name: cover.name, artUrl: artUrl(cover.id) }, displayName: displayName(), edition: editionOf(cover), stats: stats() });
+    const all = pieces(), strip = [cover, ...all.filter((p) => p.id !== cover.id)].slice(0, 7).map((p) => ({ artUrl: artUrl(p.id) }));
+    const canvas = await renderPassport({ piece: { name: cover.name, artUrl: artUrl(cover.id) }, displayName: displayName(), edition: editionOf(cover), stats: stats(), layout: S.layout, strip, stripTotal: all.length });
     const blob = await canvasToBlob(canvas);
     const url = URL.createObjectURL(blob);
     const a = h("a", { href: url, download: "wago-passport.png" });
@@ -262,15 +263,18 @@ function render() {
         h("input", { name: "n", value: S.name, maxlength: NAME_MAX, placeholder: DEFAULT_NAME, "aria-label": "Display name", autofocus: true }), h("button", { class: "pp-btn pp-btn-sm", type: "submit" }, "Save"))
     : h("h2", { class: "pp-name", "data-testid": "display-name" }, displayName());
   v.append(
-    h("section", { class: "pp-card", "data-testid": "passport-card" },
+    h("div", { class: "pp-looks", role: "group", "aria-label": "Card style" }, h("span", null, "Style"), ["sticker", "calm"].map((l) => h("button", { class: "pp-look" + (S.layout === l ? " on" : ""), "aria-pressed": String(S.layout === l), "data-testid": "look-" + l, onclick: () => { S.layout = l; store.set("passport_layout", l); render(); } }, l === "sticker" ? "Sticker" : "Calm"))),
+    h("section", { class: "pp-card" + (S.layout === "calm" ? " pp-calm" : ""), "data-testid": "passport-card" },
       h("div", { class: "pp-art-wrap" },
-        h("div", { class: "pp-art" }, h("img", { src: artUrl(cover.id), alt: cover.name, "data-testid": "cover-art" }), h("div", { class: "pp-plate" }, cover.name)),
+        h("div", { class: "pp-art" }, h("img", { src: artUrl(cover.id), alt: cover.name, "data-testid": "cover-art", onload: (e) => { const card = e.currentTarget.closest(".pp-card"); if (card) card.style.setProperty("--calm-bg", edgeColor(e.currentTarget)); } }), h("div", { class: "pp-plate" }, cover.name)),
         h("div", { class: "pp-seal-img" + (cover.collection === "origins" ? " pp-seal-pill" : ""), "aria-hidden": "true" }, h("img", { src: cover.collection === "origins" ? "/passport/assets/stamp-origin.png" : cover.collection === "grass_touchers" ? "/passport/assets/seal-grass-touchers.png" : "/passport/assets/seal-screen-toucher.png", alt: "" }), h("span", null, "VERIFIED"))),
       h("div", { class: "pp-info" },
         h("img", { class: "pp-mascot", src: "/assets/brand/wago-cheer.png", alt: "", "aria-hidden": "true" }),
+        h("div", { class: "pp-kicker" }, "WAGO PASSPORT"),
         h("div", { class: "pp-eyebrow" }, h("i"), edition, h("i")),
         nameEl,
         h("div", { class: "pp-stats" }, stats().map((s) => h("div", { class: "pp-stat" }, h("img", { class: "pp-stat-ic", src: `/passport/assets/${s.icon}.png`, alt: "", width: 56, height: 56 }), h("div", { class: "pp-stat-tx" }, h("b", { class: s.text ? "pp-stat-txt" : "" }, s.value), h("span", null, s.label))))),
+        h("div", { class: "pp-strip", "data-testid": "strip" }, h("span", null, `My collection · ${ps.length} ${ps.length === 1 ? "piece" : "pieces"}`), h("div", null, [cover, ...ps.filter((p) => p.id !== cover.id)].slice(0, 7).map((p, i) => h("img", { class: i === 0 ? "first" : "", src: safeImg(p.image), alt: "", referrerpolicy: "no-referrer" })), ps.length > 7 && h("b", null, `+${ps.length - 7}`))),
         S.pog && h("p", { class: "pp-fine pp-pogline", "data-testid": "pog-line" }, `Best streak ${S.pog.best}`),
         S.pogEnabled && !S.pog && h("div", { class: "pp-pogask" },
           h("button", { class: "pp-btn pp-btn-ghost pp-btn-sm", "data-testid": "add-pog", onclick: addPog, disabled: S.pogBusy }, S.pogBusy ? "Waiting for your wallet\u2026" : "Add my Proof of Grass stats"),
