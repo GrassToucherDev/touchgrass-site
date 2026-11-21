@@ -60,13 +60,13 @@ const WALLETS = [
 const detected = () => WALLETS.filter((w) => w.get());
 const hooked = new Set();
 
-const S = { wallet: null, walletId: null, status: "idle", origins: [], screenTouchers: [], coverId: null, name: "", editing: false, busy: false, note: "", refreshing: false, refreshError: false, checkedOnce: false };
+const S = { pog: null, pogEnabled: false, pogBusy: false, pogNote: "", wallet: null, walletId: null, status: "idle", origins: [], screenTouchers: [], coverId: null, name: "", editing: false, busy: false, note: "", refreshing: false, refreshError: false, checkedOnce: false };
 let reqId = 0;
 
 function setWallet(addr, walletId) {
   if (addr === S.wallet) { S.walletId = walletId || S.walletId; return; }
   reqId++;                                       // older answers are now ignored
-  Object.assign(S, { wallet: addr, walletId: walletId || S.walletId, status: addr ? "loading" : "idle", origins: [], screenTouchers: [], coverId: null, name: "", editing: false, note: "", refreshing: false, refreshError: false, checkedOnce: false });
+  Object.assign(S, { pog: null, pogEnabled: false, pogBusy: false, pogNote: "", wallet: addr, walletId: walletId || S.walletId, status: addr ? "loading" : "idle", origins: [], screenTouchers: [], coverId: null, name: "", editing: false, note: "", refreshing: false, refreshError: false, checkedOnce: false });
   if (addr) {
     S.coverId = store.get(`passport_cover:${addr}`);
     S.name = cleanDisplayName(store.get(`passport_name:${addr}`));
@@ -134,7 +134,7 @@ async function load(wallet, { quiet = false } = {}) {
     const r = await fetch(`/api/passport/collection?wallet=${encodeURIComponent(wallet)}`, { cache: "no-store" });
     const j = await r.json().catch(() => ({}));
     if (id !== reqId) return;
-    if (r.ok && j.status === "ok") { S.status = "ok"; S.origins = j.origins || []; S.screenTouchers = j.screenTouchers || []; }
+    if (r.ok && j.status === "ok") { S.status = "ok"; S.origins = j.origins || []; S.screenTouchers = j.screenTouchers || []; S.pogEnabled = !!j.pogEnabled; }
     else if (j.status === "not_configured") S.status = "not_configured";
     else fail();
   } catch { if (id !== reqId) return; fail(); }
@@ -143,10 +143,36 @@ async function load(wallet, { quiet = false } = {}) {
 }
 
 const pieces = () => (S.status === "ok" ? sortPieces([...S.origins, ...S.screenTouchers]) : []);
-const displayName = () => S.name || DEFAULT_NAME;
+const displayName = () => S.name || S.pog?.username || DEFAULT_NAME;
 function stats() {
   const o = S.origins.length, s = S.screenTouchers.length;
-  return [{ value: o, label: o === 1 ? "Origin" : "Origins" }, { value: s, label: s === 1 ? "Screen Toucher" : "Screen Touchers" }];
+  const t = [{ value: o, label: o === 1 ? "Origin" : "Origins" }, { value: s, label: s === 1 ? "Screen Toucher" : "Screen Touchers" }];
+  if (S.pog) t.push({ value: S.pog.proofs, label: "Outdoor Proofs" }, { value: S.pog.streak, label: "Day Streak" });
+  return t;
+}
+
+// Opt-in: sign a free message with the wallet, then ask the server for the Proof of Grass account linked to it.
+const toB64 = (u8) => { let t = ""; u8.forEach((b) => { t += String.fromCharCode(b); }); return btoa(t); };
+async function addPog() {
+  const w = WALLETS.find((x) => x.id === S.walletId), p = w && w.get(), wallet = S.wallet;
+  if (!p || !wallet || S.pogBusy) return;
+  S.pogBusy = true; S.pogNote = ""; render();
+  const same = () => S.wallet === wallet;
+  try {
+    if (typeof p.signMessage !== "function") throw new Error(`${w.name} can\u2019t sign messages. Try Phantom or Solflare.`);
+    const c = await (await fetch(`/api/passport/pog?wallet=${encodeURIComponent(wallet)}`, { cache: "no-store" })).json();
+    if (!c.message) throw new Error("Couldn\u2019t start. Try again in a moment.");
+    let signed;
+    try { signed = await p.signMessage(new TextEncoder().encode(c.message), "utf8"); } catch { throw new Error("Signature cancelled. Nothing was shared."); }
+    const sig = signed && signed.signature ? signed.signature : signed;
+    const r = await fetch("/api/passport/pog", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ wallet, signature: toB64(sig), issuedAt: c.issuedAt }) });
+    const j = await r.json().catch(() => ({}));
+    if (!same()) return;
+    if (r.ok && j.linked) S.pog = j;
+    else if (r.ok) S.pogNote = "No Proof of Grass account has this wallet verified yet. Verify it on your Proof of Grass profile, then try again.";
+    else throw new Error(j.error || "Couldn\u2019t reach Proof of Grass right now.");
+  } catch (e) { if (same()) S.pogNote = e.message || "Something went wrong."; }
+  if (same()) { S.pogBusy = false; render(); }
 }
 
 async function download() {
@@ -221,6 +247,11 @@ function render() {
         h("div", { class: "pp-eyebrow" }, h("i"), edition, h("i")),
         nameEl,
         h("div", { class: "pp-stats" }, stats().map((s) => h("div", { class: "pp-stat" }, h("b", null, s.value), h("span", null, s.label)))),
+        S.pog && h("p", { class: "pp-fine pp-pogline", "data-testid": "pog-line" }, S.pog.grove ? `Grove: ${S.pog.grove} \u00b7 ` : "", `Best streak ${S.pog.best}`),
+        S.pogEnabled && !S.pog && h("div", { class: "pp-pogask" },
+          h("button", { class: "pp-btn pp-btn-ghost pp-btn-sm", "data-testid": "add-pog", onclick: addPog, disabled: S.pogBusy }, S.pogBusy ? "Waiting for your wallet\u2026" : "Add my Proof of Grass stats"),
+          h("p", { class: "pp-fine" }, "Optional. You\u2019ll sign a free message to prove this is your wallet. No transaction.")),
+        S.pogNote && h("p", { class: "pp-fine pp-err", role: "alert", "data-testid": "pog-note" }, S.pogNote),
         !S.editing && h("button", { class: "pp-link pp-edit-m", onclick: () => { S.editing = true; render(); } }, "Edit name"),
         S.note && h("p", { class: "pp-fine pp-err", role: "alert" }, S.note))),
     h("section", { class: "pp-coll", "data-testid": "collection" },

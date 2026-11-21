@@ -92,7 +92,7 @@ export async function renderPassport({ piece, displayName, edition, stats }) {
   list.forEach((st, i) => tile(ctx, rx + (i % 2) * (tw + gap), top + Math.floor(i / 2) * (th + 26), tw, th, st.value, st.label));
 
   ctx.fillStyle = PP.forestMid; ctx.font = `700 24px ${SANS}`; ctx.textAlign = "center";
-  ctx.fillText("proofofgrass.app/passport", cx, 808);
+  ctx.fillText("touchgrass.today/passport", cx, 808);
 
   return c;
 }

@@ -163,4 +163,41 @@ async function fetchImageSafe(url, { maxBytes = 8 * 1024 * 1024, fetchImpl = fet
   throw new Error("too many redirects");
 }
 
-module.exports = { SOLANA_ADDRESS_RE, passportConfig, toHttps, imageOf, collectionOf, tokenNumber, sortPieces, classify, fetchHoldings, verifiedImageFor, isPrivateIp, fetchImageSafe };
+
+// ── Proof of Grass opt-in (signature proof) ────────────────────────────────────────────────────────────
+const crypto = require("node:crypto");
+const POG_TTL_MS = 10 * 60 * 1000;
+const B58 = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
+
+function base58Decode(str) {
+  let n = 0n;
+  for (const ch of String(str)) { const i = B58.indexOf(ch); if (i < 0) throw new Error("bad base58"); n = n * 58n + BigInt(i); }
+  let hex = n.toString(16); if (hex.length % 2) hex = "0" + hex;
+  const bytes = n === 0n ? [] : [...Buffer.from(hex, "hex")];
+  for (const ch of String(str)) { if (ch === "1") bytes.unshift(0); else break; }
+  return Buffer.from(bytes);
+}
+
+// The exact text the collector signs. Names the site, the wallet and a time, so a signature can't be reused for
+// another wallet, another site, or later on. Costs nothing and sends no transaction.
+function buildPogMessage({ wallet, issuedAt }) {
+  return ["Touch Grass \u2014 WAGO Passport", "", "Sign to show your Proof of Grass stats on your Passport. This does not cost anything or send a transaction.", "", `Site: touchgrass.today`, `Wallet: ${wallet}`, `Issued: ${issuedAt}`].join("\n");
+}
+
+function verifyWalletSignature({ wallet, message, signatureB64 }) {
+  try {
+    const pub = base58Decode(wallet);
+    if (pub.length !== 32) return false;
+    const sig = Buffer.from(String(signatureB64), "base64");
+    if (sig.length !== 64) return false;
+    const key = crypto.createPublicKey({ key: Buffer.concat([Buffer.from("302a300506032b6570032100", "hex"), pub]), format: "der", type: "spki" });
+    return crypto.verify(null, Buffer.from(message, "utf8"), key, sig);
+  } catch { return false; }
+}
+
+function pogConfig(env = process.env) {
+  const url = (env.PASSPORT_POG_URL || "").trim(), secret = (env.PASSPORT_PARTNER_SECRET || "").trim();
+  return { url, secret, ok: /^https:\/\//.test(url) && secret.length >= 16 };
+}
+
+module.exports = { buildPogMessage, verifyWalletSignature, base58Decode, pogConfig, POG_TTL_MS, SOLANA_ADDRESS_RE, passportConfig, toHttps, imageOf, collectionOf, tokenNumber, sortPieces, classify, fetchHoldings, verifiedImageFor, isPrivateIp, fetchImageSafe };
